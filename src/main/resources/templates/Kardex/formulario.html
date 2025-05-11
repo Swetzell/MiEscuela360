@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kardex de Productos | Sudamericana</title>
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+
+    <style>
+        .page-title {
+            border-left: 5px solid #0d6efd;
+            padding-left: 15px;
+        }
+
+        .btn-primary,
+        .btn-success {
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            border-radius: 8px 8px 0 0;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .alert-info {
+            border-left: 4px solid #0dcaf0;
+        }
+
+        .btn-search {
+            background-color: #0d6efd;
+            color: white;
+            padding: 10px 25px;
+            transition: all 0.3s;
+        }
+
+        .btn-search:hover {
+            background-color: #0a58ca;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-navbar {
+            background-color: #343a40;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-content {
+            margin-top: 20px;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:insert="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container-fluid py-4">
+
+        <!-- Título de la página -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="page-title text-primary">
+                <i class="fa-solid fa-boxes-stacked me-2"></i>
+                Kardex de Productos
+            </h2>
+            <span class="badge bg-primary fw-normal">Módulo de Logística</span>
+        </div>
+
+        <!-- Tarjeta de Filtro -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-primary text-white py-3">
+                <div class="d-flex align-items-center">
+                    <i class="fa-solid fa-filter me-2"></i>
+                    <h5 class="card-title mb-0">Filtro de Productos</h5>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <form th:action="@{/kardex/buscar}" method="get" class="needs-validation" novalidate>
+                    <div class="row g-3 mb-4">
+                        <!-- Primera fila -->
+                        <div class="col-md-4">
+                            <label for="linea" class="form-label">
+                                <i class="fa-solid fa-layer-group me-1"></i>
+                                Línea:
+                            </label>
+                            <select class="form-select" id="linea" name="linea">
+                                <option value="">[ Todos ]</option>
+                                <option th:each="linea : ${lineas}" th:value="${linea.linea}"
+                                    th:text="${linea.descripcion}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="sublinea" class="form-label">
+                                <i class="fa-solid fa-code-branch me-1"></i>
+                                Sub Línea:
+                            </label>
+                            <select class="form-select" id="sublinea" name="sublinea">
+                                <option value="">[ Todos ]</option>
+                                <option th:each="sublinea : ${sublineas}" th:value="${sublinea.sublinea}"
+                                    th:text="${sublinea.descripcion}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="grupo" class="form-label">
+                                <i class="fa-solid fa-object-group me-1"></i>
+                                Grupo:
+                            </label>
+                            <select class="form-select" id="grupo" name="grupo">
+                                <option value="">[ Todos ]</option>
+                                <option th:each="grupo : ${grupos}" th:value="${grupo.grupo}"
+                                    th:text="${grupo.descripcion}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <!-- Segunda fila -->
+                        <div class="col-md-4">
+                            <label for="marca" class="form-label">
+                                <i class="fa-solid fa-trademark me-1"></i>
+                                Marca:
+                            </label>
+                            <select class="form-select" id="marca" name="marca">
+                                <option value="">[ Todos ]</option>
+                                <option th:each="marca : ${marcas}" th:value="${marca.nombre}" th:text="${marca.nombre}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="almacen" class="form-label">
+                                <i class="fa-solid fa-warehouse me-1"></i>
+                                Almacén:
+                            </label>
+                            <select class="form-select" id="almacen" name="almacen">
+                                <option value="">[ Todos ]</option>
+                                <option th:each="alm : ${almacenes}" th:value="${alm.codAlm}" th:text="${alm.nomAlm}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="codigo" class="form-label">
+                                <i class="fa-solid fa-barcode me-1"></i>
+                                Código:
+                            </label>
+                            <input type="text" class="form-control" id="codigo" name="codigo"
+                                placeholder="Código del producto">
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <!-- Tercera fila -->
+                        <div class="col-md-12">
+                            <label for="descripcion" class="form-label">
+                                <i class="fa-solid fa-tag me-1"></i>
+                                Descripción:
+                            </label>
+                            <input type="text" class="form-control" id="descripcion" name="descripcion"
+                                placeholder="Nombre o descripción del producto">
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info" role="alert">
+                        <i class="fa-solid fa-circle-info me-2"></i>
+                        Ingrese al menos un criterio de búsqueda para filtrar los productos.
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-search btn-lg">
+                            <i class="fa-solid fa-search me-2"></i> Buscar Productos
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Reset function for dropdowns
+            function resetDropdown(elementId) {
+                $(`#${elementId}`).html('<option value="">[ Todos ]</option>');
+            }
+
+            // Error handler function
+            function handleAjaxError(xhr, status, error) {
+                console.error('Error en la petición AJAX:', status, error);
+                alert('Error al cargar los datos. Por favor, intente nuevamente.');
+            }
+
+            // Actualizar SubLinea cuando cambia Linea
+            $('#linea').change(function () {
+                const lineaId = $(this).val();
+                console.log('Selected Linea:', lineaId); // Debug selected value
+                resetDropdown('sublinea');
+                resetDropdown('grupo');
+
+                if (lineaId) {
+                    $.ajax({
+                        url: `/kardex/api/sublineas/${lineaId}`,
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function (data) {
+                            console.log('Raw SubLinea Response:', data); // Debug raw response
+                            let options = '<option value="">[ Todos ]</option>';
+                            if (Array.isArray(data)) {
+                                data.forEach(sublinea => {
+                                    console.log('SubLinea Item:', sublinea); // Debug each item
+                                    // Use lowercase property names to match Java model
+                                    options += `<option value="${sublinea.sublinea}">${sublinea.descripcion}</option>`;
+                                });
+                            }
+                            $('#sublinea').html(options);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('SubLinea Error:', {
+                                status: status,
+                                error: error,
+                                response: xhr.responseText
+                            });
+                            handleAjaxError(xhr, status, error);
+                        }
+                    });
+                }
+            });
+
+            // Actualizar Grupo cuando cambia SubLinea
+            $('#sublinea').change(function () {
+                const lineaId = $('#linea').val();
+                const sublineaId = $(this).val();
+                console.log('Selected Values:', { linea: lineaId, sublinea: sublineaId }); // Debug selected values
+                resetDropdown('grupo');
+
+                if (lineaId && sublineaId) {
+                    $.ajax({
+                        url: `/kardex/api/grupos/${lineaId}-${sublineaId}`,
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function (data) {
+                            console.log('Raw Grupo Response:', data); // Debug raw response
+                            let options = '<option value="">[ Todos ]</option>';
+                            if (Array.isArray(data)) {
+                                data.forEach(grupo => {
+                                    console.log('Grupo Item:', grupo); // Debug each item
+                                    // Use lowercase property names to match Java model
+                                    options += `<option value="${grupo.grupo}">${grupo.descripcion}</option>`;
+                                });
+                            }
+                            $('#grupo').html(options);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Grupo Error:', {
+                                status: status,
+                                error: error,
+                                response: xhr.responseText
+                            });
+                            handleAjaxError(xhr, status, error);
+                        }
+                    });
+                }
+            });
+            // Validation for the form
+            $('form').on('submit', function (e) {
+    e.preventDefault();
+    const $form = $(this);
+
+    // Get values from form and disable the original selects
+    $('#linea, #sublinea, #grupo').prop('disabled', true);
+
+    // Build the LSPARAM3 format
+    let lineaCompleta = '';
+    const linea = $('#linea').val() || '%';
+    const sublinea = $('#sublinea').val() || '%';
+    const grupo = $('#grupo').val() || '%';
+
+    if (linea !== '%') {
+        if (sublinea !== '%') {
+            lineaCompleta = linea + sublinea;
+            if (grupo !== '%') {
+                lineaCompleta += '-' + grupo;
+            } else {
+                lineaCompleta += '-%';
+            }
+        } else {
+            lineaCompleta = linea + '%-%';
+        }
+    } else {
+        lineaCompleta = '%%-%';
+    }
+
+    // Create a new form
+    const $newForm = $('<form>')
+        .attr('action', '/kardex/buscar')
+        .attr('method', 'get');
+
+    // Add parameters with default '%' for empty values
+    const params = {
+        linea: lineaCompleta,
+        marca: $('#marca').val() || '%',
+        codigo: $('#codigo').val() || '%',
+        descripcion: $('#descripcion').val() || '%',
+        almacen: $('#almacen').val() || '%'
+    };
+
+    // Add all parameters to the new form
+    Object.entries(params).forEach(([key, value]) => {
+        $('<input>').attr({
+            type: 'hidden',
+            name: key,
+            value: value
+        }).appendTo($newForm);
+    });
+
+    // Show loading state
+    const $submitButton = $('button[type="submit"]');
+    $submitButton.prop('disabled', true);
+    $submitButton.html('<span class="spinner-border spinner-border-sm me-2"></span>Buscando...');
+
+    // Submit the new form
+    $newForm.appendTo('body').submit();
+    $newForm.remove();
+});
+        });
+    </script>
+</body>
+
+</html>

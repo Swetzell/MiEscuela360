@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotizaciones Pendientes de Atención | Sudamericana</title>
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Estilos adicionales específicos para esta página -->
+    <style>
+        .page-title {
+            border-left: 5px solid #0d6efd;
+            padding-left: 15px;
+        }
+        
+        .btn-primary, .btn-success {
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .alert-info {
+            border-left: 4px solid #0dcaf0;
+        }
+        
+        /* Estilo para las fechas */
+        input[type="date"] {
+            background-color: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+        
+        /* Estilo para el botón de exportación */
+        .btn-export {
+            background-color: #198754;
+            color: white;
+            padding: 10px 25px;
+            transition: all 0.3s;
+        }
+        
+        .btn-export:hover {
+            background-color: #146c43;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        /* Navbar personalizado */
+        .custom-navbar {
+            background-color: #343a40;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .main-content {
+            margin-top: 20px;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:insert="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container-fluid main-content">
+        <!-- Título de la página -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="page-title text-primary">
+                <i class="fa-solid fa-file-invoice me-2"></i>
+                Cotizaciones Pendientes de Atención
+            </h2>
+            <span class="badge bg-primary fw-normal">Módulo de Importación</span>
+        </div>
+
+        <!-- Tarjeta de Filtro -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-primary text-white py-3">
+                <div class="d-flex align-items-center">
+                    <i class="fa-solid fa-filter me-2"></i>
+                    <h5 class="card-title mb-0">Filtro de Cotizaciones</h5>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <form th:action="@{/cotizaciones/exportar}" method="post" th:object="${filtro}" class="needs-validation" novalidate>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="fechaInicio" class="form-label">
+                                <i class="fa-regular fa-calendar me-1"></i>
+                                Fecha Inicio:
+                            </label>
+                            <input type="date" class="form-control shadow-sm" id="fechaInicio" 
+                                   th:field="*{fechaInicio}" required>
+                            <div class="invalid-feedback">
+                                La fecha de inicio es requerida.
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="fechaFin" class="form-label">
+                                <i class="fa-regular fa-calendar me-1"></i>
+                                Fecha Fin:
+                            </label>
+                            <input type="date" class="form-control shadow-sm" id="fechaFin" 
+                                   th:field="*{fechaFin}" required>
+                            <div class="invalid-feedback">
+                                La fecha fin es requerida.
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="codAlm" class="form-label">
+                                <i class="fa-solid fa-warehouse me-1"></i>
+                                 Almacén:
+                            </label>
+                            <select class="form-select shadow-sm" id="codAlm" th:field="*{codAlm}">
+                                <option value="">Todos los almacenes</option>
+                                <option th:each="alm : ${almacenes}"
+                                        th:value="${alm.codAlm}"
+                                        th:text="${alm.codAlm + ' - ' + alm.nomAlm}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-export btn-lg px-5 shadow" aria-label="Exportar a Excel">
+                            <i class="fa-solid fa-file-excel me-2"></i>
+                            Exportar a Excel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Información adicional -->
+        <div class="alert alert-info d-flex align-items-center mt-4 shadow-sm">
+            <i class="fa-solid fa-circle-info fs-4 me-3"></i>
+            <div>
+                <h5 class="alert-heading">Información</h5>
+                <p class="mb-0">Este módulo genera un reporte Excel de cotizaciones pendientes de atención. 
+                Por favor, seleccione un rango de fechas y, opcionalmente, un código de almacén para filtrar los resultados.</p>
+            </div>
+        </div>
+        
+        <!-- Tarjeta de instrucciones -->
+        <div class="card mt-4 shadow">
+            <div class="card-header bg-light py-3">
+                <div class="d-flex align-items-center">
+                    <i class="fa-solid fa-list-check me-2 text-primary"></i>
+                    <h5 class="card-title mb-0">Instrucciones de uso</h5>
+                </div>
+            </div>
+            <div class="card-body">
+                <ol class="mb-0">
+                    <li class="mb-2">Seleccione la <strong>Fecha de Inicio</strong> desde la cual desea consultar las cotizaciones pendientes.</li>
+                    <li class="mb-2">Seleccione la <strong>Fecha de Fin</strong> hasta la cual desea consultar las cotizaciones pendientes.</li>
+                    <li class="mb-2">Opcionalmente, ingrese un <strong>Código de Almacén</strong> específico o déjelo en blanco para incluir todos los almacenes.</li>
+                    <li class="mb-2">Haga clic en el botón <strong>Exportar a Excel</strong> para generar y descargar el reporte.</li>
+                    <li>El reporte generado incluirá información detallada de todas las cotizaciones pendientes que cumplan con los criterios seleccionados.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <p class="mb-0">&copy; 2025 Sudamericana. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- Bootstrap JS y Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
+    
+    <!-- Script para validación de formulario -->
+    <script>
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                var forms = document.getElementsByClassName('needs-validation');
+                
+                Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+            
+            document.getElementById('fechaInicio').addEventListener('change', function() {
+                document.getElementById('fechaFin').min = this.value;
+            });
+        })();
+    </script>
+</body>
+</html>

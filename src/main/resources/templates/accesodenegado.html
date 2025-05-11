@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Denegado :: SG - SUDAMERICANA</title>
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        .error-page {
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .error-icon {
+            font-size: 6rem;
+            color: #dc3545;
+            margin-bottom: 1.5rem;
+        }
+        
+        .error-card {
+            max-width: 600px;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            border: none;
+        }
+        
+        .error-footer {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-top: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Contenido principal -->
+    <div class="container error-page">
+        <div class="card error-card">
+            <div class="card-header bg-danger text-white">
+                <h3 class="my-2"><i class="fas fa-exclamation-triangle me-2"></i> Acceso Denegado</h3>
+            </div>
+            <div class="card-body text-center py-5">
+                <i class="fas fa-lock error-icon"></i>
+                <h4 class="card-title mb-3">No tienes permisos para acceder a este servicio</h4>
+                <p class="card-text text-muted mb-4">
+                    Es posible que no tengas asignados los permisos necesarios para acceder a esta funcionalidad.
+                    Si necesitas acceso, por favor contacta al administrador del sistema.
+                </p>
+            </div>
+            <div class="error-footer text-center">
+                <a href="/" class="btn btn-primary me-2">
+                    <i class="fas fa-home me-1"></i> Ir al inicio
+                </a>
+                <button onclick="history.back()" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Volver atrás
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Agregar animación de entrada
+            $(".error-card").hide().fadeIn(800);
+            
+            // Resaltar el botón principal después de un breve retraso
+            setTimeout(function() {
+                $(".btn-primary").addClass("shadow-sm").css("transform", "scale(1.05)");
+                setTimeout(function() {
+                    $(".btn-primary").removeClass("shadow-sm").css("transform", "scale(1)");
+                }, 300);
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+.git
+.gitignore
+.idea
+.vscode
+*.iml
+target/*
+!target/ROOT.war
+node_modules
+.env
+README.md
