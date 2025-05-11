@@ -77,14 +77,8 @@ public class AutorizacionService {
         Usuario usuario = usuarioOpt.get();
         
         // Verificar si tiene rol ADMIN en la base de datos
-        if (usuario.getRoles().stream().anyMatch(r -> 
-                r.getNombre().equals("ADMIN") || r.getNombre().equals("ROLE_ADMIN"))) {
-            return true;
-        }
-        
-        // Verificar si tiene asignado el servicio específico de gestión de usuarios
-        return usuario.getServicios().stream()
-                .anyMatch(servicio -> servicio.getRuta().equals("/usuarios"));
+        return usuario.getRoles().stream().anyMatch(r -> 
+                r.getNombre().equals("ADMINISTRADOR") || r.getNombre().equals("ROLE_ADMINISTRADOR"));
     }
     
     /**
@@ -92,7 +86,7 @@ public class AutorizacionService {
      */
     private boolean esUsuarioAdmin(Authentication authentication) {
         return authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMINISTRADOR"));
     }
 
     public boolean tieneAccesoAGestionServicios() {
@@ -119,13 +113,7 @@ public class AutorizacionService {
         Usuario usuario = usuarioOpt.get();
         
         // Verificar si tiene rol ADMIN en la base de datos
-        if (usuario.getRoles().stream().anyMatch(r -> 
-                r.getNombre().equals("ADMIN") || r.getNombre().equals("ROLE_ADMIN"))) {
-            return true;
-        }
-        
-        // Verificar si tiene asignado el servicio específico de gestión de servicios
-        return usuario.getServicios().stream()
-                .anyMatch(servicio -> servicio.getRuta().equals("/servicios"));
+        return usuario.getRoles().stream().anyMatch(r -> 
+                r.getNombre().equals("ADMINISTRADOR") || r.getNombre().equals("ROLE_ADMINISTRADOR"));
     }
 }

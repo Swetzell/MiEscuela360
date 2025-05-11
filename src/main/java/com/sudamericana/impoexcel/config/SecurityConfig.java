@@ -23,12 +23,12 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()
                 .requestMatchers("/login", "/error", "/acceso-denegado").permitAll()
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                // Ya no definimos permisos por módulo aquí, solo lo básico
+                .requestMatchers("/admin/**").hasRole("ADMINISTRADOR")
+                .requestMatchers("/maestra/**").hasRole("MAESTRA")
                 .anyRequest().authenticated()
             )
             .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/conciliaciones/cuentas-por-entidad", "/conciliaciones/exportar")
+                .ignoringRequestMatchers("/api/**")
             )
             .formLogin(form -> form
                 .loginPage("/login")

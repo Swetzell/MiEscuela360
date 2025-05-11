@@ -1,120 +1,93 @@
-<div th:fragment="navbar">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
-        <div class="container-fluid">
-            <!-- Logo -->
-            <a class="navbar-brand" href="#">
-                <img src="/img/SUDAMERICANALOGO.png" alt="Logo" style="height: 50px; width: auto;" class="d-inline-block align-middle">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>MiEscuela360</title>
+</head>
+<body>
+    <nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-school me-2"></i>MiEscuela360
             </a>
-
-            <!-- Botón para móviles -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
-                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
-            <!-- Contenido del navbar -->
-            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active fw-bold" href="/"><i class="fas fa-home"></i> Inicio</a>
-                    </li>
-                    
-                    <!-- Importación -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle fw-bold" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-file-import"></i> Importación
+                    <!-- Alumnos -->
+                    <li class="nav-item dropdown" sec:authorize="hasAnyRole('ADMINISTRADOR', 'MAESTRA')">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-graduate"></i> Alumnos
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/excel/buscar"><i class="fas fa-chart-line"></i> Reporte Importación</a></li>
-                            <li><a class="dropdown-item" th:href="@{/cotizaciones/pendientes}"><i class="fas fa-box"></i> Cotización Pendiente de Atención</a></li>
-                            <li><a class="dropdown-item" th:href="@{/reposicion-productos}"><i class="fas fa-box"></i> Reposición de Productos</a></li>
+                            <li><a class="dropdown-item" th:href="@{/alumnos}">
+                                <i class="fas fa-list"></i> Lista de Alumnos
+                            </a></li>
+                            <li><a class="dropdown-item" th:href="@{/alumnos/nuevo}">
+                                <i class="fas fa-plus"></i> Nuevo Alumno
+                            </a></li>
                         </ul>
                     </li>
 
-                    <!-- Ventas -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle fw-bold" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-shopping-cart"></i> Ventas
+                    <!-- Padres -->
+                    <li class="nav-item dropdown" sec:authorize="hasAnyRole('ADMINISTRADOR', 'MAESTRA')">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-users"></i> Padres
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" th:href="@{/reportesabc}"><i class="fas fa-chart-bar"></i> Reporte Ventas ABC</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-history"></i> Récord de Ventas</a></li>
+                            <li><a class="dropdown-item" th:href="@{/padres}">
+                                <i class="fas fa-list"></i> Lista de Padres
+                            </a></li>
+                            <li><a class="dropdown-item" th:href="@{/padres/nuevo}">
+                                <i class="fas fa-plus"></i> Nuevo Padre
+                            </a></li>
                         </ul>
                     </li>
 
-                    <!-- Finanzas -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle fw-bold" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-coins"></i> Finanzas
+                    <!-- Pagos -->
+                    <li class="nav-item dropdown" sec:authorize="hasRole('ADMINISTRADOR')">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-money-bill-wave"></i> Pagos
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-file-invoice-dollar"></i> Envío Documentación Contable</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-university"></i> Conciliaciones Bancarias</a></li>
+                            <li><a class="dropdown-item" th:href="@{/pagos}">
+                                <i class="fas fa-list"></i> Registro de Pagos
+                            </a></li>
+                            <li><a class="dropdown-item" th:href="@{/pagos/nuevo}">
+                                <i class="fas fa-plus"></i> Nuevo Pago
+                            </a></li>
                         </ul>
                     </li>
 
-                    <!-- Sistemas -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle fw-bold" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-cogs"></i> Sistemas
+                    <!-- Administración -->
+                    <li class="nav-item dropdown" sec:authorize="hasRole('ADMINISTRADOR')">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-cogs"></i> Administración
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-server"></i> Inventario de Sistemas</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-lock"></i> Seguridad y Backups</a></li>
-                        </ul>
-                    </li>
-
-                    <!-- Logística -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle fw-bold" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-truck"></i> Logística
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-boxes"></i> Gestión de Inventarios</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-shipping-fast"></i> Seguimiento de Envíos</a></li>
-                        </ul>
-                    </li>
-
-                    <!-- Gerencia -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle fw-bold" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-tie"></i> Gerencia
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-chart-pie"></i> Reportes Estratégicos</a></li>
-                            <li>
-                                <a class="dropdown-item" href="/usuarios/gestion">
-                                    <i class="fas fa-users"></i> Gestión de Usuarios
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" th:href="@{/servicios}">
-                                    <i class="fas fa-shield-alt"></i> Gestión de Servicios
-                                </a>
-                            </li>
+                            <li><a class="dropdown-item" th:href="@{/usuarios/gestion}">
+                                <i class="fas fa-users-cog"></i> Gestión de Usuarios
+                            </a></li>
+                            <li><a class="dropdown-item" th:href="@{/servicios}">
+                                <i class="fas fa-shield-alt"></i> Gestión de Servicios
+                            </a></li>
                         </ul>
                     </li>
                 </ul>
 
-                
-
-                <!-- Usuario con menú desplegable -->
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white fw-bold" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle"></i> <span th:text="${username}"></span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <form th:action="@{/logout}" method="post">
-                                    <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
-                                </form>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-
+                <!-- Usuario y Cerrar Sesión -->
+                <div class="d-flex align-items-center">
+                    <span class="navbar-text me-3" th:text="${username}">Usuario</span>
+                    <form th:action="@{/logout}" method="post">
+                        <button class="btn btn-outline-light" type="submit">
+                            <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </nav>
-</div>
+</body>
+</html>
