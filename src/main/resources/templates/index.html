@@ -5,130 +5,195 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MiEscuela360 - Sistema de Gestión Educativa</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #2c3e50 0%, #3498db 100%);
+        }
+        .nav-link {
+            color: rgba(255,255,255,.8) !important;
+            padding: 1rem;
+            margin: 0.2rem 0;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+        }
+        .nav-link:hover {
+            color: #fff !important;
+            background: rgba(255,255,255,.1);
+        }
+        .nav-link.active {
+            background: rgba(255,255,255,.2);
+            color: #fff !important;
+        }
+        .nav-link i {
+            width: 25px;
+        }
         .module-card {
             transition: transform 0.3s;
-            margin-bottom: 20px;
+            cursor: pointer;
         }
         .module-card:hover {
             transform: translateY(-5px);
         }
-        .icon-large {
-            font-size: 1.5em;
+        .welcome-section {
+            background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
         }
     </style>
 </head>
 
-<body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-school me-2"></i>MiEscuela360
-            </a>
-            <div class="d-flex">
-                <span class="navbar-text me-3" th:text="${username}">Usuario</span>
-                <form th:action="@{/logout}" method="post">
-                    <button class="btn btn-outline-light" type="submit">
-                        <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
-                    </button>
-                </form>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container mt-4">
-        <h2 class="text-center mb-4">Bienvenido al Sistema de Gestión Educativa</h2>
-        
+<body>
+    <div class="container-fluid">
         <div class="row">
-            <!-- Módulo de Alumnos -->
-            <div class="col-md-4" sec:authorize="hasAnyRole('ADMINISTRADOR', 'MAESTRA')">
-                <div class="card module-card shadow-lg rounded">
-                    <div class="card-header bg-primary text-white text-center fw-bold">
-                        <i class="fas fa-user-graduate icon-large me-2"></i> Alumnos
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h4 class="text-white">MiEscuela360</h4>
+                        <p class="text-white-50">Sistema de Gestión Educativa</p>
                     </div>
-                    <div class="card-body text-center">
-                        <h5 class="card-title fw-bold">Gestión de Alumnos</h5>
-                        <p class="card-text">Administre la información de los alumnos:</p>
-                        <a th:href="@{/alumnos}" class="btn btn-primary btn-lg w-100 mb-2">
-                            <i class="fas fa-list me-2"></i> Lista de Alumnos
-                        </a>
-                        <a th:href="@{/alumnos/nuevo}" class="btn btn-primary btn-lg w-100">
-                            <i class="fas fa-plus me-2"></i> Nuevo Alumno
-                        </a>
-                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/">
+                                <i class="fas fa-home"></i> Inicio
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/usuarios">
+                                <i class="fas fa-users"></i> Gestión de Usuarios
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/alumnos">
+                                <i class="fas fa-user-graduate"></i> Gestión de Alumnos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/padres">
+                                <i class="fas fa-male"></i> Gestión de Padres
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/madres">
+                                <i class="fas fa-female"></i> Gestión de Madres
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/pagos">
+                                <i class="fas fa-money-bill-wave"></i> Gestión de Pagos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/reportes">
+                                <i class="fas fa-chart-bar"></i> Reportes
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-danger" href="/logout">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-            </div>
+            </nav>
 
-            <!-- Módulo de Padres -->
-            <div class="col-md-4" sec:authorize="hasAnyRole('ADMINISTRADOR', 'MAESTRA')">
-                <div class="card module-card shadow-lg rounded">
-                    <div class="card-header bg-success text-white text-center fw-bold">
-                        <i class="fas fa-users icon-large me-2"></i> Padres
-                    </div>
-                    <div class="card-body text-center">
-                        <h5 class="card-title fw-bold">Gestión de Padres</h5>
-                        <p class="card-text">Administre la información de los padres:</p>
-                        <a th:href="@{/padres}" class="btn btn-success btn-lg w-100 mb-2">
-                            <i class="fas fa-list me-2"></i> Lista de Padres
-                        </a>
-                        <a th:href="@{/padres/nuevo}" class="btn btn-success btn-lg w-100">
-                            <i class="fas fa-plus me-2"></i> Nuevo Padre
-                        </a>
-                    </div>
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <!-- Welcome Section -->
+                <div class="welcome-section">
+                    <h2>Bienvenido a MiEscuela360</h2>
+                    <p class="mb-0">Sistema integral de gestión educativa</p>
                 </div>
-            </div>
 
-            <!-- Módulo de Pagos -->
-            <div class="col-md-4" sec:authorize="hasRole('ADMINISTRADOR')">
-                <div class="card module-card shadow-lg rounded">
-                    <div class="card-header bg-warning text-dark text-center fw-bold">
-                        <i class="fas fa-money-bill-wave icon-large me-2"></i> Pagos
+                <!-- Modules Grid -->
+                <div class="row g-4">
+                    <!-- Gestión de Usuarios -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card module-card h-100" onclick="window.location.href='/usuarios'">
+                            <div class="card-body text-center">
+                                <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                                <h5 class="card-title">Gestión de Usuarios</h5>
+                                <p class="card-text">Administre usuarios, roles y permisos del sistema</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body text-center">
-                        <h5 class="card-title fw-bold">Gestión de Pagos</h5>
-                        <p class="card-text">Administre los pagos y facturación:</p>
-                        <a th:href="@{/pagos}" class="btn btn-warning btn-lg w-100 mb-2">
-                            <i class="fas fa-list me-2"></i> Registro de Pagos
-                        </a>
-                        <a th:href="@{/pagos/nuevo}" class="btn btn-warning btn-lg w-100">
-                            <i class="fas fa-plus me-2"></i> Nuevo Pago
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Módulo de Administración (solo para administradores) -->
-        <div class="row mt-4" sec:authorize="hasRole('ADMINISTRADOR')">
-            <div class="col-md-4">
-                <div class="card module-card shadow-lg rounded">
-                    <div class="card-header bg-dark text-white text-center fw-bold">
-                        <i class="fas fa-cogs icon-large me-2"></i> Administración
+                    <!-- Gestión de Alumnos -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card module-card h-100" onclick="window.location.href='/alumnos'">
+                            <div class="card-body text-center">
+                                <i class="fas fa-user-graduate fa-3x text-success mb-3"></i>
+                                <h5 class="card-title">Gestión de Alumnos</h5>
+                                <p class="card-text">Administre la información de los estudiantes</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body text-center">
-                        <h5 class="card-title fw-bold">Configuración del Sistema</h5>
-                        <p class="card-text">Administre la configuración del sistema:</p>
-                        <a th:href="@{/usuarios/gestion}" class="btn btn-dark btn-lg w-100 mb-2">
-                            <i class="fas fa-users-cog me-2"></i> Gestión de Usuarios
-                        </a>
-                        <a th:href="@{/servicios}" class="btn btn-dark btn-lg w-100">
-                            <i class="fas fa-shield-alt me-2"></i> Gestión de Servicios
-                        </a>
+
+                    <!-- Gestión de Padres -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card module-card h-100" onclick="window.location.href='/padres'">
+                            <div class="card-body text-center">
+                                <i class="fas fa-male fa-3x text-primary mb-3"></i>
+                                <h5 class="card-title">Gestión de Padres</h5>
+                                <p class="card-text">Administre la información de los padres</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gestión de Madres -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card module-card h-100" onclick="window.location.href='/madres'">
+                            <div class="card-body text-center">
+                                <i class="fas fa-female fa-3x text-info mb-3"></i>
+                                <h5 class="card-title">Gestión de Madres</h5>
+                                <p class="card-text">Administre la información de las madres</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gestión de Pagos -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card module-card h-100" onclick="window.location.href='/pagos'">
+                            <div class="card-body text-center">
+                                <i class="fas fa-money-bill-wave fa-3x text-warning mb-3"></i>
+                                <h5 class="card-title">Gestión de Pagos</h5>
+                                <p class="card-text">Administre los pagos y cuotas de los alumnos</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reportes -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card module-card h-100" onclick="window.location.href='/reportes'">
+                            <div class="card-body text-center">
+                                <i class="fas fa-chart-bar fa-3x text-info mb-3"></i>
+                                <h5 class="card-title">Reportes</h5>
+                                <p class="card-text">Genere reportes y estadísticas del sistema</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configuración -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card module-card h-100" onclick="window.location.href='/configuracion'">
+                            <div class="card-body text-center">
+                                <i class="fas fa-cog fa-3x text-secondary mb-3"></i>
+                                <h5 class="card-title">Configuración</h5>
+                                <p class="card-text">Configure los parámetros del sistema</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3 mt-5">
-        <p class="mb-0">&copy; 2024 MiEscuela360. Todos los derechos reservados.</p>
-    </footer>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

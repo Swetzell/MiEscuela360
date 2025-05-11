@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${usuario.id == null ? 'Nuevo Usuario' : 'Editar Usuario'} + ' - MiEscuela360'"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #2c3e50 0%, #3498db 100%);
+        }
+        .nav-link {
+            color: rgba(255,255,255,.8) !important;
+            padding: 1rem;
+            margin: 0.2rem 0;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+        }
+        .nav-link:hover {
+            color: #fff !important;
+            background: rgba(255,255,255,.1);
+        }
+        .nav-link.active {
+            background: rgba(255,255,255,.2);
+            color: #fff !important;
+        }
+        .nav-link i {
+            width: 25px;
+        }
+        .form-card {
+            border-left: 4px solid #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h4 class="text-white">MiEscuela360</h4>
+                        <p class="text-white-50">Sistema de Gestión Educativa</p>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">
+                                <i class="fas fa-home"></i> Inicio
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/usuarios">
+                                <i class="fas fa-users"></i> Gestión de Usuarios
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/alumnos">
+                                <i class="fas fa-user-graduate"></i> Gestión de Alumnos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/padres">
+                                <i class="fas fa-male"></i> Gestión de Padres
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/madres">
+                                <i class="fas fa-female"></i> Gestión de Madres
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/pagos">
+                                <i class="fas fa-money-bill-wave"></i> Gestión de Pagos
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-danger" href="/logout">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                    <h1 class="h2">
+                        <i class="fas fa-users text-primary me-2"></i>
+                        <span th:text="${usuario.id == null ? 'Nuevo Usuario' : 'Editar Usuario'}"></span>
+                    </h1>
+                    <div>
+                        <a th:href="@{/usuarios}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Mensajes de error -->
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <!-- Formulario -->
+                <div class="card shadow-sm form-card">
+                    <div class="card-body">
+                        <form th:action="@{/usuarios/guardar}" th:object="${usuario}" method="post">
+                            <input type="hidden" th:field="*{id}" />
+                            
+                            <div class="row">
+                                <!-- Datos Personales -->
+                                <div class="col-md-6">
+                                    <h5 class="mb-3">
+                                        <i class="fas fa-user text-primary me-2"></i>
+                                        Datos Personales
+                                    </h5>
+                                    
+                                    <div class="mb-3">
+                                        <label for="nombre" class="form-label">Nombre</label>
+                                        <input type="text" class="form-control" id="nombre" th:field="*{nombre}" required>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="apellido" class="form-label">Apellido</label>
+                                        <input type="text" class="form-control" id="apellido" th:field="*{apellido}" required>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                                    </div>
+                                </div>
+
+                                <!-- Datos de Acceso -->
+                                <div class="col-md-6">
+                                    <h5 class="mb-3">
+                                        <i class="fas fa-lock text-success me-2"></i>
+                                        Datos de Acceso
+                                    </h5>
+                                    
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label">Nombre de Usuario</label>
+                                        <input type="text" class="form-control" id="username" th:field="*{username}" required>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label">Contraseña</label>
+                                        <input type="password" class="form-control" id="password" th:field="*{password}" th:required="${usuario.id == null}">
+                                        <small class="text-muted" th:if="${usuario.id != null}">Dejar en blanco para mantener la contraseña actual</small>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="roles" class="form-label">Roles</label>
+                                        <select class="form-select" id="roles" th:field="*{roles}" multiple required>
+                                            <option th:each="rol : ${roles}" 
+                                                    th:value="${rol.id}" 
+                                                    th:text="${rol.nombre}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="activo" th:field="*{activo}">
+                                            <label class="form-check-label" for="activo">
+                                                Usuario Activo
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-end mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>
+                                    <span th:text="${usuario.id == null ? 'Guardar' : 'Actualizar'}"></span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
