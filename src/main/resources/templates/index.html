@@ -12,31 +12,38 @@
             min-height: 100vh;
             background: linear-gradient(180deg, #2c3e50 0%, #3498db 100%);
         }
+
         .nav-link {
-            color: rgba(255,255,255,.8) !important;
+            color: rgba(255, 255, 255, .8) !important;
             padding: 1rem;
             margin: 0.2rem 0;
             border-radius: 0.5rem;
             transition: all 0.3s;
         }
+
         .nav-link:hover {
             color: #fff !important;
-            background: rgba(255,255,255,.1);
+            background: rgba(255, 255, 255, .1);
         }
+
         .nav-link.active {
-            background: rgba(255,255,255,.2);
+            background: rgba(255, 255, 255, .2);
             color: #fff !important;
         }
+
         .nav-link i {
             width: 25px;
         }
+
         .module-card {
             transition: transform 0.3s;
             cursor: pointer;
         }
+
         .module-card:hover {
             transform: translateY(-5px);
         }
+
         .welcome-section {
             background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
             color: white;
@@ -71,6 +78,11 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/alumnos">
                                 <i class="fas fa-user-graduate"></i> Gestión de Alumnos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/asistencias">
+                                <i class="fas fa-clipboard-check"></i> Gestión de Asistencias
                             </a>
                         </li>
                         <li class="nav-item">
@@ -130,6 +142,17 @@
                                 <i class="fas fa-user-graduate fa-3x text-success mb-3"></i>
                                 <h5 class="card-title">Gestión de Alumnos</h5>
                                 <p class="card-text">Administre la información de los estudiantes</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gestión de Asistencias -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card module-card h-100" onclick="window.location.href='/asistencias'">
+                            <div class="card-body text-center">
+                                <i class="fas fa-clipboard-check fa-3x text-warning mb-3"></i>
+                                <h5 class="card-title">Gestión de Asistencias</h5>
+                                <p class="card-text">Registre y administre la asistencia de los alumnos</p>
                             </div>
                         </div>
                     </div>

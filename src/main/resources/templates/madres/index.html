@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,26 +13,31 @@
             min-height: 100vh;
             background: linear-gradient(180deg, #2c3e50 0%, #3498db 100%);
         }
+
         .nav-link {
-            color: rgba(255,255,255,.8) !important;
+            color: rgba(255, 255, 255, .8) !important;
             padding: 1rem;
             margin: 0.2rem 0;
             border-radius: 0.5rem;
             transition: all 0.3s;
         }
+
         .nav-link:hover {
             color: #fff !important;
-            background: rgba(255,255,255,.1);
+            background: rgba(255, 255, 255, .1);
         }
+
         .nav-link.active {
-            background: rgba(255,255,255,.2);
+            background: rgba(255, 255, 255, .2);
             color: #fff !important;
         }
+
         .nav-link i {
             width: 25px;
         }
     </style>
 </head>
+
 <body>
     <div class="container-fluid">
         <div class="row">
@@ -44,7 +50,7 @@
                     </div>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link" href="/">
+                            <a class="nav-link active" href="/">
                                 <i class="fas fa-home"></i> Inicio
                             </a>
                         </li>
@@ -59,18 +65,28 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="/asistencias">
+                                <i class="fas fa-clipboard-check"></i> Gestión de Asistencias
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="/padres">
                                 <i class="fas fa-male"></i> Gestión de Padres
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="/madres">
+                            <a class="nav-link" href="/madres">
                                 <i class="fas fa-female"></i> Gestión de Madres
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/pagos">
                                 <i class="fas fa-money-bill-wave"></i> Gestión de Pagos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/reportes">
+                                <i class="fas fa-chart-bar"></i> Reportes
                             </a>
                         </li>
                         <li class="nav-item mt-4">
@@ -81,10 +97,10 @@
                     </ul>
                 </div>
             </nav>
-
             <!-- Main content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
                     <h1 class="h2">
                         <i class="fas fa-female text-primary me-2"></i>
                         Gestión de Madres
@@ -128,18 +144,18 @@
                                         <td th:text="${madre.ocupacion}"></td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                <a th:href="@{/madres/detalle/{id}(id=${madre.id})}" 
-                                                   class="btn btn-info btn-sm" title="Ver detalles">
+                                                <a th:href="@{/madres/detalle/{id}(id=${madre.id})}"
+                                                    class="btn btn-info btn-sm" title="Ver detalles">
                                                     <i class="fa fa-eye"></i>
                                                 </a>
-                                                <a th:href="@{/madres/editar/{id}(id=${madre.id})}" 
-                                                   class="btn btn-warning btn-sm" title="Editar">
+                                                <a th:href="@{/madres/editar/{id}(id=${madre.id})}"
+                                                    class="btn btn-warning btn-sm" title="Editar">
                                                     <i class="fa fa-edit"></i>
                                                 </a>
-                                                <a th:href="@{/madres/eliminar/{id}(id=${madre.id})}" 
-                                                   class="btn btn-danger btn-sm" 
-                                                   onclick="return confirm('¿Está seguro de eliminar esta madre?')"
-                                                   title="Eliminar">
+                                                <a th:href="@{/madres/eliminar/{id}(id=${madre.id})}"
+                                                    class="btn btn-danger btn-sm"
+                                                    onclick="return confirm('¿Está seguro de eliminar esta madre?')"
+                                                    title="Eliminar">
                                                     <i class="fa fa-trash"></i>
                                                 </a>
                                             </div>
@@ -156,4 +172,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html> 
+
+</html>
