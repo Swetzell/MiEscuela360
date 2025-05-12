@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalle de Pago - MiEscuela360</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <style>
+    .sidebar {
+      min-height: 100vh;
+      background: linear-gradient(180deg, #2c3e50 0%, #3498db 100%);
+    }
+
+    .nav-link {
+      color: rgba(255, 255, 255, .8) !important;
+      padding: 1rem;
+      margin: 0.2rem 0;
+      border-radius: 0.5rem;
+      transition: all 0.3s;
+    }
+
+    .nav-link:hover {
+      color: #fff !important;
+      background: rgba(255, 255, 255, .1);
+    }
+
+    .nav-link.active {
+      background: rgba(255, 255, 255, .2);
+      color: #fff !important;
+    }
+
+    .nav-link i {
+      width: 25px;
+    }
+
+    .badge-estado {
+      padding: 0.5em 0.7em;
+      border-radius: 0.25rem;
+    }
+
+    .estado-pendiente {
+      background-color: #ffc107;
+      color: black;
+    }
+
+    .estado-pagado {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .estado-vencido {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .estado-anulado {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .detail-card {
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-item {
+      display: flex;
+      margin-bottom: 1rem;
+    }
+
+    .info-label {
+      min-width: 150px;
+      font-weight: bold;
+      color: #495057;
+    }
+
+    .info-value {
+      flex-grow: 1;
+    }
+
+    .action-buttons {
+      margin-top: 20px;
+    }
+
+    @media print {
+
+      .sidebar,
+      .action-buttons,
+      .btn {
+        display: none !important;
+      }
+
+      .col-md-9 {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+      }
+
+      body {
+        background-color: white !important;
+      }
+
+      .detail-card {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+      }
+
+      .comprobante-title {
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar -->
+      <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+        <div class="position-sticky pt-3">
+          <div class="text-center mb-4">
+            <h4 class="text-white">MiEscuela360</h4>
+            <p class="text-white-50">Sistema de Gestión Educativa</p>
+          </div>
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="fas fa-home"></i> Inicio
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/usuarios">
+                <i class="fas fa-users"></i> Gestión de Usuarios
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/alumnos">
+                <i class="fas fa-user-graduate"></i> Gestión de Alumnos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/asistencias">
+                <i class="fas fa-clipboard-check"></i> Gestión de Asistencias
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/padres">
+                <i class="fas fa-male"></i> Gestión de Padres
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/madres">
+                <i class="fas fa-female"></i> Gestión de Madres
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="/pagos">
+                <i class="fas fa-money-bill-wave"></i> Gestión de Pagos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/reportes">
+                <i class="fas fa-chart-bar"></i> Reportes
+              </a>
+            </li>
+            <li class="nav-item mt-4">
+              <a class="nav-link text-danger" href="/logout">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Main content -->
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+          <h1 class="h2">
+            <i class="fas fa-money-bill-wave text-success me-2"></i>
+            Detalle del Pago
+          </h1>
+          <a th:href="@{/pagos}" class="btn btn-secondary">
+            <i class="fa fa-arrow-left"></i> Volver a Pagos
+          </a>
+        </div>
+
+        <!-- Detalle del Pago -->
+        <div class="card detail-card mb-4">
+          <div class="card-body">
+            <h2 class="text-center mb-4 comprobante-title">
+              <i class="fas fa-receipt"></i> Comprobante de Pago
+            </h2>
+
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="info-item">
+                  <div class="info-label">N° de Pago:</div>
+                  <div class="info-value">
+                    <span th:text="${pago.id}" class="fw-bold"></span>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Fecha:</div>
+                  <div class="info-value" th:text="${#temporals.format(pago.fecha, 'dd/MM/yyyy')}"></div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Estado:</div>
+                  <div class="info-value">
+                    <span th:if="${pago.estado.name() == 'PENDIENTE'}" class="badge estado-pendiente">Pendiente</span>
+                    <span th:if="${pago.estado.name() == 'PAGADO'}" class="badge estado-pagado">Pagado</span>
+                    <span th:if="${pago.estado.name() == 'VENCIDO'}" class="badge estado-vencido">Vencido</span>
+                    <span th:if="${pago.estado.name() == 'ANULADO'}" class="badge estado-anulado">Anulado</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="info-item">
+                  <div class="info-label">Concepto:</div>
+                  <div class="info-value">
+                    <span th:if="${pago.tipo == T(com.miescuela360.model.Pago.TipoPago).PENSION}">Pensión</span>
+                    <span th:if="${pago.tipo == T(com.miescuela360.model.Pago.TipoPago).MATRICULA}">Matrícula</span>
+                    <span th:if="${pago.tipo == T(com.miescuela360.model.Pago.TipoPago).OTRO}">Otro</span>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Vencimiento:</div>
+                  <div class="info-value"
+                    th:text="${pago.fechaVencimiento != null ? #temporals.format(pago.fechaVencimiento, 'dd/MM/yyyy') : '-'}">
+                  </div>
+                </div>
+                <div class="info-item" th:if="${pago.estado.name() == 'PAGADO'}">
+                  <div class="info-label">Fecha de Pago:</div>
+                  <div class="info-value"
+                    th:text="${pago.fechaPago != null ? #temporals.format(pago.fechaPago, 'dd/MM/yyyy') : '-'}"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card mb-4 border-0 bg-light">
+              <div class="card-body">
+                <h5 class="card-title">Datos del Alumno</h5>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="info-item">
+                      <div class="info-label">Nombre:</div>
+                      <div class="info-value" th:text="${pago.alumno.nombre + ' ' + pago.alumno.apellido}"></div>
+                    </div>
+                    <div class="info-item">
+                      <div class="info-label">DNI:</div>
+                      <div class="info-value" th:text="${pago.alumno.dni}"></div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="info-item">
+                      <div class="info-label">Grado:</div>
+                      <div class="info-value" th:text="${pago.alumno.gradoActual + ' - ' + pago.alumno.seccionActual}">
+                      </div>
+                    </div>
+                    <div class="info-item">
+                      <div class="info-label">Monto Mensual:</div>
+                      <div class="info-value">S/ <span th:text="${pago.alumno.montoMensual}"></span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-4">
+              <div class="col-md-12">
+                <h5>Detalle del Pago</h5>
+                <div class="table-responsive">
+                  <table class="table table-bordered">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Concepto</th>
+                        <th class="text-end">Monto</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <span th:if="${pago.tipo == T(com.miescuela360.model.Pago.TipoPago).PENSION}">Pensión</span>
+                          <span
+                            th:if="${pago.tipo == T(com.miescuela360.model.Pago.TipoPago).MATRICULA}">Matrícula</span>
+                          <span th:if="${pago.tipo == T(com.miescuela360.model.Pago.TipoPago).OTRO}">Otro</span>
+                        </td>
+                        <td class="text-end">S/ <span th:text="${pago.monto}"></span></td>
+                      </tr>
+                      <tr>
+                        <th class="text-end">TOTAL</th>
+                        <th class="text-end">S/ <span th:text="${pago.monto}"></span></th>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-4" th:if="${pago.observaciones != null && !pago.observaciones.isEmpty()}">
+              <div class="col-12">
+                <h5>Observaciones</h5>
+                <p class="border p-3 bg-light rounded" th:text="${pago.observaciones}"></p>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="info-item">
+                  <div class="info-label">Registrado por:</div>
+                  <div class="info-value"
+                    th:text="${pago.registradoPor != null ? pago.registradoPor.nombre + ' ' + pago.registradoPor.apellido : '-'}">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="row mt-5">
+              <div class="col-6 text-center">
+                <div class="border-top border-dark pt-2" style="width: 70%; margin: 0 auto;">
+                  Firma del Responsable
+                </div>
+              </div>
+              <div class="col-6 text-center">
+                <div class="border-top border-dark pt-2" style="width: 70%; margin: 0 auto;">
+                  Sello del Colegio
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acciones -->
+        <div class="action-buttons text-center">
+          <a th:href="@{/pagos}" class="btn btn-secondary me-2">
+            <i class="fas fa-arrow-left"></i> Volver
+          </a>
+          <a th:href="@{/pagos/editar/{id}(id=${pago.id})}" class="btn btn-warning me-2">
+            <i class="fas fa-edit"></i> Editar
+          </a>
+          <button class="btn btn-primary me-2" onclick="window.print()">
+            <i class="fas fa-print"></i> Imprimir
+          </button>
+          <a th:if="${pago.estado.name() == 'PENDIENTE'}" th:href="@{/pagos/procesar/{id}(id=${pago.id})}"
+            class="btn btn-success me-2" onclick="return confirm('¿Está seguro de procesar este pago como pagado?')">
+            <i class="fas fa-check"></i> Procesar Pago
+          </a>
+          <a th:if="${pago.estado.name() != 'ANULADO'}" th:href="@{/pagos/anular/{id}(id=${pago.id})}"
+            class="btn btn-secondary me-2" onclick="return confirm('¿Está seguro de anular este pago?')">
+            <i class="fas fa-ban"></i> Anular
+          </a>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

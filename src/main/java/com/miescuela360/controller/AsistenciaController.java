@@ -59,11 +59,9 @@ public class AsistenciaController {
         
         LocalDate fechaHoy = LocalDate.now();
         
-        // Preparar asistencias para todos los alumnos
         List<Asistencia> asistencias = new ArrayList<>();
         
         for (Alumno alumno : alumnos) {
-            // Verificar si ya existe una asistencia para este alumno en esta fecha
             List<Asistencia> asistenciasExistentes = asistenciaService.findByAlumnoAndFecha(alumno, fechaHoy);
             
             if (asistenciasExistentes.isEmpty()) {
@@ -116,21 +114,18 @@ public class AsistenciaController {
                     if (alumnoOpt.isPresent()) {
                         asistencia.setAlumno(alumnoOpt.get());
                     } else {
-                        continue; // Skip if alumno not found
+                        continue; 
                     }
                     asistencia.setFecha(fecha);
                     asistencia.setHoraEntrada(LocalTime.now());
                 } else {
-                    // Usar asistencia existente
                     asistencia = asistenciasExistentes.get(0);
                 }
                 
-                // Actualizar estado y observaciones
                 asistencia.setEstado(Asistencia.EstadoAsistencia.valueOf(estadoStr));
                 asistencia.setObservaciones(observacion);
                 asistencia.setRegistradoPor(usuario);
                 
-                // Guardar asistencia
                 asistenciaService.save(asistencia);
             }
             
@@ -158,7 +153,6 @@ public class AsistenciaController {
     @PostMapping("/actualizar")
     public String actualizarAsistencia(@ModelAttribute Asistencia asistencia, RedirectAttributes redirectAttributes) {
         try {
-            // Obtener la asistencia existente para mantener la relación con el alumno
             Optional<Asistencia> asistenciaExistente = asistenciaService.findById(asistencia.getId());
             
             if (asistenciaExistente.isPresent()) {

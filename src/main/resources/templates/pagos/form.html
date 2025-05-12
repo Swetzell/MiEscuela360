@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${pago.id == null ? 'Nuevo Pago' : 'Editar Pago'} + ' - MiEscuela360'"></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <style>
+    .sidebar {
+      min-height: 100vh;
+      background: linear-gradient(180deg, #2c3e50 0%, #3498db 100%);
+    }
+
+    .nav-link {
+      color: rgba(255, 255, 255, .8) !important;
+      padding: 1rem;
+      margin: 0.2rem 0;
+      border-radius: 0.5rem;
+      transition: all 0.3s;
+    }
+
+    .nav-link:hover {
+      color: #fff !important;
+      background: rgba(255, 255, 255, .1);
+    }
+
+    .nav-link.active {
+      background: rgba(255, 255, 255, .2);
+      color: #fff !important;
+    }
+
+    .nav-link i {
+      width: 25px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar -->
+      <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+        <div class="position-sticky pt-3">
+          <div class="text-center mb-4">
+            <h4 class="text-white">MiEscuela360</h4>
+            <p class="text-white-50">Sistema de Gestión Educativa</p>
+          </div>
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="fas fa-home"></i> Inicio
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/usuarios">
+                <i class="fas fa-users"></i> Gestión de Usuarios
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/alumnos">
+                <i class="fas fa-user-graduate"></i> Gestión de Alumnos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/asistencias">
+                <i class="fas fa-clipboard-check"></i> Gestión de Asistencias
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/padres">
+                <i class="fas fa-male"></i> Gestión de Padres
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/madres">
+                <i class="fas fa-female"></i> Gestión de Madres
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="/pagos">
+                <i class="fas fa-money-bill-wave"></i> Gestión de Pagos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/reportes">
+                <i class="fas fa-chart-bar"></i> Reportes
+              </a>
+            </li>
+            <li class="nav-item mt-4">
+              <a class="nav-link text-danger" href="/logout">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Main content -->
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+          <h1 class="h2">
+            <i class="fas fa-money-bill-wave text-success me-2"></i>
+            <span th:text="${pago.id == null ? 'Nuevo Pago' : 'Editar Pago'}"></span>
+          </h1>
+          <a th:href="@{/pagos}" class="btn btn-secondary">
+            <i class="fa fa-arrow-left"></i> Volver a Pagos
+          </a>
+        </div>
+
+        <!-- Mensajes de alerta -->
+        <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
+          <span th:text="${mensaje}"></span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+          <span th:text="${error}"></span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Formulario de Pago -->
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <form th:action="@{/pagos/guardar}" method="post" th:object="${pago}">
+              <input type="hidden" th:field="*{id}">
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="alumno" class="form-label fw-bold">Alumno</label>
+                  <select id="alumno" th:field="*{alumno}" class="form-select" required>
+                    <option value="">Seleccione un alumno</option>
+                    <option th:each="alumno : ${alumnos}" th:value="${alumno.id}"
+                      th:text="${alumno.nombre + ' ' + alumno.apellido + ' - ' + alumno.gradoActual + ' ' + alumno.seccionActual}">
+                    </option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="tipo" class="form-label fw-bold">Tipo de Pago</label>
+                  <select id="tipo" th:field="*{tipo}" class="form-select" required>
+                    <option value="">Seleccione un tipo</option>
+                    <option th:each="tipo : ${tiposPago}" th:value="${tipo}"
+                      th:text="${tipo == T(com.miescuela360.model.Pago.TipoPago).PENSION ? 'Pensión' : 
+                                                          tipo == T(com.miescuela360.model.Pago.TipoPago).MATRICULA ? 'Matrícula' : 'Otro'}">
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <label for="monto" class="form-label fw-bold">Monto (S/)</label>
+                  <input type="number" id="monto" th:field="*{monto}" step="0.01" min="0" class="form-control"
+                    placeholder="0.00" required>
+                </div>
+                <div class="col-md-4">
+                  <label for="fecha" class="form-label fw-bold">Fecha de Registro</label>
+                  <input type="date" id="fecha" th:field="*{fecha}" class="form-control"
+                    th:value="${pago.fecha != null ? pago.fecha : #dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
+                    required>
+                </div>
+                <div class="col-md-4">
+                  <label for="fechaVencimiento" class="form-label fw-bold">Fecha de Vencimiento</label>
+                  <input type="date" id="fechaVencimiento" th:field="*{fechaVencimiento}" class="form-control">
+                </div>
+              </div>
+
+              <div class="row mb-3" th:if="${pago.id != null}">
+                <div class="col-md-6">
+                  <label for="estado" class="form-label fw-bold">Estado</label>
+                  <select id="estado" th:field="*{estado}" class="form-select" required>
+                    <option th:each="estado : ${estados}" th:value="${estado}" th:text="${estado}">
+                    </option>
+                  </select>
+                </div>
+                <div class="col-md-6" th:if="${pago.estado != null && pago.estado.name() == 'PAGADO'}">
+                  <label for="fechaPago" class="form-label fw-bold">Fecha de Pago</label>
+                  <input type="date" id="fechaPago" th:field="*{fechaPago}" class="form-control">
+                </div>
+              </div>
+
+              <div class="row mb-3" th:if="${pago.id == null}">
+                <div class="col-md-6">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="pagoInmediato" name="pagoInmediato">
+                    <label class="form-check-label" for="pagoInmediato">Registrar como pagado inmediatamente</label>
+                  </div>
+                </div>
+                <div class="col-md-6" id="fechaPagoDiv" style="display: none;">
+                  <label for="fechaPago" class="form-label fw-bold">Fecha de Pago</label>
+                  <input type="date" id="fechaPago" name="fechaPago" class="form-control"
+                    th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="observaciones" class="form-label fw-bold">Observaciones</label>
+                <textarea id="observaciones" th:field="*{observaciones}" class="form-control" rows="3"
+                  placeholder="Detalles adicionales sobre el pago..."></textarea>
+              </div>
+
+              <div class="text-end">
+                <a th:href="@{/pagos}" class="btn btn-secondary me-2">
+                  <i class="fas fa-times"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-save"></i> Guardar Pago
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Script para mostrar/ocultar campo de fecha de pago
+    document.addEventListener('DOMContentLoaded', function () {
+      const pagoInmediato = document.getElementById('pagoInmediato');
+      const fechaPagoDiv = document.getElementById('fechaPagoDiv');
+
+      if (pagoInmediato) {
+        pagoInmediato.addEventListener('change', function () {
+          fechaPagoDiv.style.display = this.checked ? 'block' : 'none';
+        });
+      }
+    });
+
+    // Cargar monto mensual del alumno seleccionado (para pagos tipo PENSION)
+    document.addEventListener('DOMContentLoaded', function () {
+      const alumnoSelect = document.getElementById('alumno');
+      const tipoSelect = document.getElementById('tipo');
+      const montoInput = document.getElementById('monto');
+
+      if (alumnoSelect && tipoSelect && montoInput) {
+        // Almacenar las mensualidades de los alumnos
+        const mensualidades = {};
+
+        // Función para actualizar el monto basado en la selección
+        function actualizarMonto() {
+          const alumnoId = alumnoSelect.value;
+          const tipoPago = tipoSelect.value;
+
+          if (alumnoId && tipoPago === 'PENSION' && mensualidades[alumnoId]) {
+            montoInput.value = mensualidades[alumnoId];
+          }
+        }
+
+        // Escuchar cambios en el alumno y tipo
+        alumnoSelect.addEventListener('change', actualizarMonto);
+        tipoSelect.addEventListener('change', actualizarMonto);
+      }
+    });
+  </script>
+</body>
+
+</html>
