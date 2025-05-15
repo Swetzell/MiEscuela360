@@ -227,4 +227,11 @@ public class PagoService {
     public List<TipoPago> obtenerTodosLosTiposPago() {
         return Arrays.asList(TipoPago.values());
     }
+      /**
+     * Suma los montos por estado
+     */
+    public Double sumMontoByEstado(EstadoPago estado) {
+        Double resultado = pagoRepository.sumMontoByEstado(estado);
+        return resultado != null ? resultado : 0.0;
+    }
 }

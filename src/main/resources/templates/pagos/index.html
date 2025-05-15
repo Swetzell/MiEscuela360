@@ -230,8 +230,8 @@
                 <label for="estado" class="form-label">Estado</label>
                 <select id="estado" name="estado" class="form-select">
                   <option value="">Todos los estados</option>
-                  <option th:each="estadoOpt : ${estados}" th:value="${estadoOpt}" th:text="${estadoOpt}"
-                    th:selected="${estadoOpt == estadoFiltro}"></option>
+                  <option th:each="estadoOpt : ${estados}" th:value="${estadoOpt.name()}" th:text="${estadoOpt}"
+                    th:selected="${estadoOpt.name() == estadoFiltro?.name()}"></option>
                 </select>
               </div>
               <div class="col-12 text-end">
@@ -269,22 +269,28 @@
                   </tr>
                   <tr th:each="pago : ${pagos}">
                     <td th:text="${pago.id}"></td>
-                    <td th:text="${#temporals.format(pago.fecha, 'dd/MM/yyyy')}"></td>
-                    <td th:text="${pago.alumno.nombre + ' ' + pago.alumno.apellido}"></td>
+                    <td th:text="${pago.fecha != null ? #temporals.format(pago.fecha, 'dd/MM/yyyy') : '-'}"></td>
+                    <td th:text="${pago.alumno != null ? (pago.alumno.nombre + ' ' + pago.alumno.apellido) : '-'}"></td>
                     <td>
                       <span th:if="${pago.tipo == T(com.miescuela360.model.Pago.TipoPago).PENSION}">Pensión</span>
                       <span th:if="${pago.tipo == T(com.miescuela360.model.Pago.TipoPago).MATRICULA}">Matrícula</span>
                       <span th:if="${pago.tipo == T(com.miescuela360.model.Pago.TipoPago).OTRO}">Otro</span>
+                      <span th:if="${pago.tipo == null}">-</span>
                     </td>
-                    <td>S/ <span th:text="${pago.monto}"></span></td>
+                    <td>S/ <span th:text="${pago.monto != null ? pago.monto : '-'}"></span></td>
                     <td
                       th:text="${pago.fechaVencimiento != null ? #temporals.format(pago.fechaVencimiento, 'dd/MM/yyyy') : '-'}">
                     </td>
                     <td>
-                      <span th:if="${pago.estado.name() == 'PENDIENTE'}" class="badge estado-pendiente">Pendiente</span>
-                      <span th:if="${pago.estado.name() == 'PAGADO'}" class="badge estado-pagado">Pagado</span>
-                      <span th:if="${pago.estado.name() == 'VENCIDO'}" class="badge estado-vencido">Vencido</span>
-                      <span th:if="${pago.estado.name() == 'ANULADO'}" class="badge estado-anulado">Anulado</span>
+                      <span th:if="${pago.estado != null && pago.estado.name() == 'PENDIENTE'}"
+                        class="badge estado-pendiente">Pendiente</span>
+                      <span th:if="${pago.estado != null && pago.estado.name() == 'PAGADO'}"
+                        class="badge estado-pagado">Pagado</span>
+                      <span th:if="${pago.estado != null && pago.estado.name() == 'VENCIDO'}"
+                        class="badge estado-vencido">Vencido</span>
+                      <span th:if="${pago.estado != null && pago.estado.name() == 'ANULADO'}"
+                        class="badge estado-anulado">Anulado</span>
+                      <span th:if="${pago.estado == null}">-</span>
                     </td>
                     <td>
                       <div class="btn-group" role="group">
@@ -292,15 +298,15 @@
                           title="Ver detalles">
                           <i class="fa fa-eye"></i>
                         </a>
-                        <a th:if="${pago.estado.name() == 'PENDIENTE'}" th:href="@{/pagos/procesar/{id}(id=${pago.id})}"
-                          class="btn btn-success btn-sm"
+                        <a th:if="${pago.estado != null && pago.estado.name() == 'PENDIENTE'}"
+                          th:href="@{/pagos/procesar/{id}(id=${pago.id})}" class="btn btn-success btn-sm"
                           onclick="return confirm('¿Está seguro de procesar este pago como pagado?')"
                           title="Procesar pago">
                           <i class="fa fa-check"></i>
                         </a>
-                        <a th:if="${pago.estado.name() != 'ANULADO'}" th:href="@{/pagos/anular/{id}(id=${pago.id})}"
-                          class="btn btn-secondary btn-sm" onclick="return confirm('¿Está seguro de anular este pago?')"
-                          title="Anular pago">
+                        <a th:if="${pago.estado != null && pago.estado.name() != 'ANULADO'}"
+                          th:href="@{/pagos/anular/{id}(id=${pago.id})}" class="btn btn-secondary btn-sm"
+                          onclick="return confirm('¿Está seguro de anular este pago?')" title="Anular pago">
                           <i class="fa fa-ban"></i>
                         </a>
                         <a th:href="@{/pagos/editar/{id}(id=${pago.id})}" class="btn btn-warning btn-sm" title="Editar">

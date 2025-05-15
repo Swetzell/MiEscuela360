@@ -4,7 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title th:text="${pago.id == null ? 'Nuevo Pago' : 'Editar Pago'} + ' - MiEscuela360'"></title>
+  <title
+    th:text="${pago != null && pago.id == null ? 'Nuevo Pago' : (pago != null ? 'Editar Pago' : 'Pago')} + ' - MiEscuela360'">
+    Pago - MiEscuela360</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -136,11 +138,10 @@
                     </option>
                   </select>
                 </div>
-                <div class="col-md-6">
-                  <label for="tipo" class="form-label fw-bold">Tipo de Pago</label>
+                <div class="col-md-6"> <label for="tipo" class="form-label fw-bold">Tipo de Pago</label>
                   <select id="tipo" th:field="*{tipo}" class="form-select" required>
                     <option value="">Seleccione un tipo</option>
-                    <option th:each="tipo : ${tiposPago}" th:value="${tipo}"
+                    <option th:each="tipo : ${tiposPago}" th:value="${tipo.name()}"
                       th:text="${tipo == T(com.miescuela360.model.Pago.TipoPago).PENSION ? 'Pensión' : 
                                                           tipo == T(com.miescuela360.model.Pago.TipoPago).MATRICULA ? 'Matrícula' : 'Otro'}">
                     </option>
@@ -170,13 +171,12 @@
                 <div class="col-md-6">
                   <label for="estado" class="form-label fw-bold">Estado</label>
                   <select id="estado" th:field="*{estado}" class="form-select" required>
-                    <option th:each="estado : ${estados}" th:value="${estado}" th:text="${estado}">
-                    </option>
+                    <option th:each="estado : ${estados}" th:value="${estado.name()}" th:text="${estado}"></option>
                   </select>
                 </div>
                 <div class="col-md-6" th:if="${pago.estado != null && pago.estado.name() == 'PAGADO'}">
                   <label for="fechaPago" class="form-label fw-bold">Fecha de Pago</label>
-                  <input type="date" id="fechaPago" th:field="*{fechaPago}" class="form-control">
+                  <input type="date" id="fechaPagoEdit" th:field="*{fechaPago}" class="form-control">
                 </div>
               </div>
 
@@ -188,8 +188,8 @@
                   </div>
                 </div>
                 <div class="col-md-6" id="fechaPagoDiv" style="display: none;">
-                  <label for="fechaPago" class="form-label fw-bold">Fecha de Pago</label>
-                  <input type="date" id="fechaPago" name="fechaPago" class="form-control"
+                  <label for="fechaPagoNuevo" class="form-label fw-bold">Fecha de Pago</label>
+                  <input type="date" id="fechaPagoNuevo" name="fechaPago" class="form-control"
                     th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
                 </div>
               </div>
