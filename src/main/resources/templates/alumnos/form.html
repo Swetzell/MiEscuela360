@@ -228,9 +228,9 @@
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="padre" class="form-label">Padre</label>
+                                        <label for="padre" class="form-label">Padre y/o Apoderado</label>
                                         <select class="form-select" id="padre" th:field="*{padre}">
-                                            <option value="">Seleccione un padre</option>
+                                            <option value="">Seleccione un padre o apoderado</option>
                                             <option th:each="padre : ${padres}" th:value="${padre.id}"
                                                 th:text="${padre.nombre + ' ' + padre.apellido}">
                                             </option>
@@ -238,9 +238,9 @@
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="madre" class="form-label">Madre</label>
+                                        <label for="madre" class="form-label">Madre y/o Apoderada</label>
                                         <select class="form-select" id="madre" th:field="*{madre}">
-                                            <option value="">Seleccione una madre</option>
+                                            <option value="">Seleccione una madre o apoderada</option>
                                             <option th:each="madre : ${madres}" th:value="${madre.id}"
                                                 th:text="${madre.nombre + ' ' + madre.apellido}">
                                             </option>

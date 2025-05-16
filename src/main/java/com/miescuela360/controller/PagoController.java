@@ -26,20 +26,16 @@ public class PagoController {
             @RequestParam(required = false) LocalDate fechaInicio,
             @RequestParam(required = false) LocalDate fechaFin,
             Model model) {
-          // Asegurar que los pagos se agreguen al modelo
         List<Pago> pagos;
         
-        // Convertir el estado a Enum si viene como parámetro
         Pago.EstadoPago estadoFiltro = null;
         if (estado != null && !estado.isEmpty()) {
             try {
                 estadoFiltro = Pago.EstadoPago.valueOf(estado);
             } catch (IllegalArgumentException e) {
-                // Ignorar si el valor no es válido
             }
         }
         
-        // Aplicar filtros si están presentes
         if (fechaInicio != null && fechaFin != null) {
             try {
                 if (estadoFiltro != null) {
@@ -48,7 +44,6 @@ public class PagoController {
                     pagos = pagoService.filtrarPagos(fechaInicio, fechaFin, null);
                 }
             } catch (Exception e) {
-                // Si hay un error con el filtro, mostrar todos los pagos
                 pagos = pagoService.findAll();
             }
         } else {
@@ -58,16 +53,13 @@ public class PagoController {
                 pagos = pagoService.findAll();
             }
         }
-          // Agregar los pagos al modelo
         model.addAttribute("pagos", pagos);
         
-        // Agregar los estados y el filtro al modelo
         model.addAttribute("estados", pagoService.obtenerTodosLosEstados());
         model.addAttribute("estadoFiltro", estadoFiltro);
         model.addAttribute("fechaInicio", fechaInicio);
         model.addAttribute("fechaFin", fechaFin);
         
-        // Estadísticas para el dashboard
         try {
             model.addAttribute("totalPagos", pagoService.contarTotalPagos());
         } catch (Exception e) {
@@ -85,7 +77,6 @@ public class PagoController {
             model.addAttribute("pagosPagados", 0);
         }
         
-        // Para el monto total
         try {
             Double montoTotal = pagoService.sumMontoByEstado(Pago.EstadoPago.PAGADO);
             model.addAttribute("montoTotal", montoTotal != null ? montoTotal : 0.0);
@@ -110,7 +101,6 @@ public class PagoController {
             @RequestParam(required = false) LocalDate fechaPago,
             RedirectAttributes redirectAttributes) {
         
-        // Si es un pago inmediato, establecer como PAGADO y guardar la fecha de pago
         if (pago.getId() == null && pagoInmediato) {
             pago.setEstado(Pago.EstadoPago.PAGADO);
             pago.setFechaPago(fechaPago != null ? fechaPago : LocalDate.now());

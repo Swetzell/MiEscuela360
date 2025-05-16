@@ -207,7 +207,7 @@
                       <td>
                         <div class="d-flex flex-column estado-radios">
                           <div class="form-check form-check-inline mb-2" th:each="estado : ${estadosAsistencia}">
-                            <input class="form-check-input" type="radio" name="estado"
+                            <input class="form-check-input" type="radio" th:name="'estado[' + ${iterStat.index} + ']'"
                               th:id="'estado-' + ${estado} + '-' + ${asistencia.alumno.id}" th:value="${estado}"
                               th:checked="${asistencia.estado == estado}">
                             <label class="form-check-label"
@@ -220,7 +220,7 @@
                       </td>
 
                       <td>
-                        <textarea class="form-control" rows="2" name="observaciones"
+                        <textarea class="form-control" rows="2" th:name="'observaciones[' + ${iterStat.index} + ']'"
                           th:text="${asistencia.observaciones}" placeholder="Observaciones (opcional)"></textarea>
                       </td>
                     </tr>

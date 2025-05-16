@@ -52,7 +52,6 @@ public class AsistenciaController {
 
     @GetMapping("/registrar")
     public String mostrarFormularioRegistro(Model model) {
-        // Obtener todos los alumnos activos
         List<Alumno> alumnos = alumnoService.findAll().stream()
                 .filter(Alumno::isActivo)
                 .toList();
@@ -65,7 +64,6 @@ public class AsistenciaController {
             List<Asistencia> asistenciasExistentes = asistenciaService.findByAlumnoAndFecha(alumno, fechaHoy);
             
             if (asistenciasExistentes.isEmpty()) {
-                // Crear una nueva asistencia si no existe
                 Asistencia asistencia = new Asistencia();
                 asistencia.setAlumno(alumno);
                 asistencia.setFecha(fechaHoy);
@@ -73,7 +71,6 @@ public class AsistenciaController {
                 asistencia.setEstado(Asistencia.EstadoAsistencia.PRESENTE);
                 asistencias.add(asistencia);
             } else {
-                // Usar la asistencia existente
                 asistencias.add(asistenciasExistentes.get(0));
             }
         }
@@ -88,27 +85,28 @@ public class AsistenciaController {
     @PostMapping("/guardar")
     public String guardarAsistencias(
             @RequestParam("alumnoId") List<Long> alumnoIds,
-            @RequestParam("estado") List<String> estados,
-            @RequestParam("observaciones") List<String> observaciones,
+            @RequestParam(name = "estado", required = false) List<String> estados,
+            @RequestParam(name = "observaciones", required = false) List<String> observaciones,
             @RequestParam("fecha") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
             RedirectAttributes redirectAttributes) {
         
-        // Obtener el usuario actual autenticado
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = usuarioService.findByUsername(auth.getName()).orElse(null);
         
         try {
+            if (estados == null) estados = new ArrayList<>();
+            if (observaciones == null) observaciones = new ArrayList<>();
+            
             for (int i = 0; i < alumnoIds.size(); i++) {
                 Long alumnoId = alumnoIds.get(i);
-                String estadoStr = estados.get(i);
-                String observacion = i < observaciones.size() ? observaciones.get(i) : "";
                 
-                // Buscar asistencia existente para este alumno y fecha
+                String estadoStr = (i < estados.size()) ? estados.get(i) : "PRESENTE";
+                String observacion = (i < observaciones.size()) ? observaciones.get(i) : "";
+                
                 List<Asistencia> asistenciasExistentes = asistenciaService.findByAlumnoIdAndFecha(alumnoId, fecha);
                 Asistencia asistencia;
                 
                 if (asistenciasExistentes.isEmpty()) {
-                    // Crear nueva asistencia
                     asistencia = new Asistencia();
                     Optional<Alumno> alumnoOpt = alumnoService.findById(alumnoId);
                     if (alumnoOpt.isPresent()) {
@@ -122,7 +120,16 @@ public class AsistenciaController {
                     asistencia = asistenciasExistentes.get(0);
                 }
                 
-                asistencia.setEstado(Asistencia.EstadoAsistencia.valueOf(estadoStr));
+                if (!estadoStr.isEmpty()) {
+                    try {
+                        asistencia.setEstado(Asistencia.EstadoAsistencia.valueOf(estadoStr));
+                    } catch (IllegalArgumentException e) {
+                        asistencia.setEstado(Asistencia.EstadoAsistencia.PRESENTE);
+                    }
+                } else {
+                    asistencia.setEstado(Asistencia.EstadoAsistencia.PRESENTE);
+                }
+                
                 asistencia.setObservaciones(observacion);
                 asistencia.setRegistradoPor(usuario);
                 
@@ -132,11 +139,11 @@ public class AsistenciaController {
             redirectAttributes.addFlashAttribute("mensaje", "Asistencias guardadas exitosamente");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al guardar asistencias: " + e.getMessage());
+            e.printStackTrace(); 
         }
         
         return "redirect:/asistencias";
     }
-
     @GetMapping("/editar/{id}")
     public String editarAsistencia(@PathVariable Long id, Model model) {
         Optional<Asistencia> asistenciaOpt = asistenciaService.findById(id);
@@ -158,11 +165,9 @@ public class AsistenciaController {
             if (asistenciaExistente.isPresent()) {
                 Asistencia asistenciaActual = asistenciaExistente.get();
                 
-                // Actualizar solo los campos permitidos
                 asistenciaActual.setEstado(asistencia.getEstado());
                 asistenciaActual.setObservaciones(asistencia.getObservaciones());
                 
-                // Obtener el usuario actual autenticado
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                 Usuario usuario = usuarioService.findByUsername(auth.getName()).orElse(null);
                 asistenciaActual.setRegistradoPor(usuario);
