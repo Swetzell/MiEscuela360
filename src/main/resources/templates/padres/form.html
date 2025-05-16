@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,32 +12,39 @@
             min-height: 100vh;
             background: linear-gradient(180deg, #2c3e50 0%, #3498db 100%);
         }
+
         .nav-link {
-            color: rgba(255,255,255,.8) !important;
+            color: rgba(255, 255, 255, .8) !important;
             padding: 1rem;
             margin: 0.2rem 0;
             border-radius: 0.5rem;
             transition: all 0.3s;
         }
+
         .nav-link:hover {
             color: #fff !important;
-            background: rgba(255,255,255,.1);
+            background: rgba(255, 255, 255, .1);
         }
+
         .nav-link.active {
-            background: rgba(255,255,255,.2);
+            background: rgba(255, 255, 255, .2);
             color: #fff !important;
         }
+
         .nav-link i {
             width: 25px;
         }
+
         .form-card {
             border-left: 4px solid #3498db;
         }
     </style>
 </head>
+
 <body>
     <div class="container-fluid">
         <div class="row">
+            <!-- Sidebar -->
             <!-- Sidebar -->
             <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="position-sticky pt-3">
@@ -51,13 +59,18 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/usuarios">
+                            <a class="nav-link " href="/usuarios">
                                 <i class="fas fa-users"></i> Gestión de Usuarios
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/alumnos">
                                 <i class="fas fa-user-graduate"></i> Gestión de Alumnos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/asistencias">
+                                <i class="fas fa-clipboard-check"></i> Gestión de Asistencias
                             </a>
                         </li>
                         <li class="nav-item">
@@ -75,6 +88,11 @@
                                 <i class="fas fa-money-bill-wave"></i> Gestión de Pagos
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/reportes">
+                                <i class="fas fa-chart-bar"></i> Reportes
+                            </a>
+                        </li>
                         <li class="nav-item mt-4">
                             <a class="nav-link text-danger" href="/logout">
                                 <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
@@ -86,7 +104,8 @@
 
             <!-- Main content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
                     <h1 class="h2">
                         <i class="fas fa-male text-primary me-2"></i>
                         <span th:text="${padre.id == null ? 'Nuevo Padre' : 'Editar Padre'}"></span>
@@ -110,7 +129,7 @@
                     <div class="card-body">
                         <form th:action="@{/padres/guardar}" th:object="${padre}" method="post">
                             <input type="hidden" th:field="*{id}" />
-                            
+
                             <div class="row">
                                 <!-- Datos Personales -->
                                 <div class="col-md-6">
@@ -118,45 +137,48 @@
                                         <i class="fas fa-user text-primary me-2"></i>
                                         Datos Personales
                                     </h5>
-                                    
+
                                     <div class="mb-3">
                                         <label for="nombre" class="form-label">Nombre</label>
-                                        <input type="text" class="form-control" id="nombre" th:field="*{nombre}" required>
+                                        <input type="text" class="form-control" id="nombre" th:field="*{nombre}"
+                                            required>
                                     </div>
-                                    
+
                                     <div class="mb-3">
                                         <label for="apellido" class="form-label">Apellido</label>
-                                        <input type="text" class="form-control" id="apellido" th:field="*{apellido}" required>
+                                        <input type="text" class="form-control" id="apellido" th:field="*{apellido}"
+                                            required>
                                     </div>
-                                    
+
                                     <div class="mb-3">
                                         <label for="dni" class="form-label">DNI</label>
                                         <input type="text" class="form-control" id="dni" th:field="*{dni}" required>
                                     </div>
-                                    
+
                                     <div class="mb-3">
                                         <label for="direccion" class="form-label">Dirección</label>
                                         <input type="text" class="form-control" id="direccion" th:field="*{direccion}">
                                     </div>
-                                    
+
                                     <div class="mb-3">
                                         <label for="telefono" class="form-label">Teléfono</label>
                                         <input type="text" class="form-control" id="telefono" th:field="*{telefono}">
                                     </div>
-                                    
+
                                     <div class="mb-3">
                                         <label for="email" class="form-label">Email</label>
                                         <input type="email" class="form-control" id="email" th:field="*{email}">
                                     </div>
-                                    
+
                                     <div class="mb-3">
                                         <label for="ocupacion" class="form-label">Ocupación</label>
                                         <input type="text" class="form-control" id="ocupacion" th:field="*{ocupacion}">
                                     </div>
-                                    
+
                                     <div class="mb-3">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="activo" th:field="*{activo}">
+                                            <input class="form-check-input" type="checkbox" id="activo"
+                                                th:field="*{activo}">
                                             <label class="form-check-label" for="activo">
                                                 Padre Activo
                                             </label>
@@ -179,5 +201,17 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Script para cerrar automáticamente las alertas después de 5 segundos
+        window.setTimeout(function () {
+            document.querySelectorAll('.alert').forEach(function (alert) {
+                var bsAlert = new bootstrap.Alert(alert);
+                setTimeout(function () {
+                    bsAlert.close();
+                }, 5000);
+            });
+        }, 1000);
+    </script>
 </body>
-</html> 
+
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <!-- CSS Styles fragment that can be included in all pages -->
+  <th:block th:fragment="commonStyles">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+      /* Sidebar styles */
+      .sidebar {
+        min-height: 100vh;
+        background: linear-gradient(180deg, #2c3e50 0%, #3498db 100%);
+      }
+
+      .nav-link {
+        color: rgba(255, 255, 255, .8) !important;
+        padding: 1rem;
+        margin: 0.2rem 0;
+        border-radius: 0.5rem;
+        transition: all 0.3s;
+      }
+
+      .nav-link:hover {
+        color: #fff !important;
+        background: rgba(255, 255, 255, .1);
+      }
+
+      .nav-link.active {
+        background: rgba(255, 255, 255, .2);
+        color: #fff !important;
+      }
+
+      .nav-link i {
+        width: 25px;
+      }
+
+      /* Table styles */
+      .table th {
+        background-color: #f8f9fa;
+      }
+
+      .btn-action {
+        width: 35px;
+        height: 35px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 2px;
+      }
+
+      /* Estado badges */
+      .badge-estado {
+        padding: 0.5em 0.7em;
+        border-radius: 0.25rem;
+      }
+
+      .estado-pendiente {
+        background-color: #ffc107;
+        color: black;
+      }
+
+      .estado-pagado {
+        background-color: #28a745;
+        color: white;
+      }
+
+      .estado-vencido {
+        background-color: #dc3545;
+        color: white;
+      }
+
+      .estado-anulado {
+        background-color: #6c757d;
+        color: white;
+      }
+
+      /* Card styles */
+      .stats-card {
+        border-radius: 10px;
+        transition: transform 0.3s;
+      }
+
+      .stats-card:hover {
+        transform: translateY(-5px);
+      }
+    </style>
+  </th:block>
+</head>
+
+<body>
+</body>
+
+</html>
