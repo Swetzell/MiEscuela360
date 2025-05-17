@@ -140,18 +140,25 @@
                                     <div class="mb-3">
                                         <label for="nombre" class="form-label">Nombre</label>
                                         <input type="text" class="form-control" id="nombre" th:field="*{nombre}"
-                                            required>
+                                            required
+                                            pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$"
+                                            title="Solo se permiten letras y espacios">
                                     </div>
 
                                     <div class="mb-3">
                                         <label for="apellido" class="form-label">Apellido</label>
                                         <input type="text" class="form-control" id="apellido" th:field="*{apellido}"
-                                            required>
+                                            required
+                                            pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$"
+                                            title="Solo se permiten letras y espacios">
                                     </div>
 
                                     <div class="mb-3">
                                         <label for="dni" class="form-label">DNI</label>
-                                        <input type="text" class="form-control" id="dni" th:field="*{dni}" required>
+                                        <input type="text" class="form-control" id="dni" th:field="*{dni}"
+                                            required
+                                            pattern="^\d{8}$"
+                                            title="El DNI debe tener exactamente 8 dígitos">
                                     </div>
 
                                     <div class="mb-3">

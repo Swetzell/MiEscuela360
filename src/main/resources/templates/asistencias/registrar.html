@@ -172,6 +172,10 @@
           <div class="card-body">
             <form th:action="@{/asistencias/guardar}" method="post">
               <input type="hidden" name="fecha" th:value="${fecha}">
+              <div th:if="${errorFechaFutura}" class="alert alert-danger" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                La fecha no puede ser futura. Por favor, seleccione una fecha válida.
+              </div>
 
               <div class="mb-3">
                 <button type="button" class="btn btn-outline-success me-2" id="marcarTodos">

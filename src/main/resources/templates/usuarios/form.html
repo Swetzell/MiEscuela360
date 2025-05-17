@@ -139,19 +139,25 @@
                                     <div class="mb-3">
                                         <label for="nombre" class="form-label">Nombre</label>
                                         <input type="text" class="form-control" id="nombre" th:field="*{nombre}"
-                                            required>
+                                            required
+                                            pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$"
+                                            title="Solo se permiten letras y espacios">
                                     </div>
 
                                     <div class="mb-3">
                                         <label for="apellido" class="form-label">Apellido</label>
                                         <input type="text" class="form-control" id="apellido" th:field="*{apellido}"
-                                            required>
+                                            required
+                                            pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$"
+                                            title="Solo se permiten letras y espacios">
                                     </div>
 
                                     <div class="mb-3">
                                         <label for="email" class="form-label">Email</label>
                                         <input type="email" class="form-control" id="email" th:field="*{email}"
-                                            required>
+                                            required
+                                            pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                                            title="Ingrese un correo electrónico válido">
                                     </div>
                                 </div>
 
@@ -165,7 +171,9 @@
                                     <div class="mb-3">
                                         <label for="username" class="form-label">Nombre de Usuario</label>
                                         <input type="text" class="form-control" id="username" th:field="*{username}"
-                                            required>
+                                            required
+                                            pattern="^[A-Za-z0-9_]+$"
+                                            title="Solo se permiten letras, números y guiones bajos">
                                     </div>
 
                                     <div class="mb-3">

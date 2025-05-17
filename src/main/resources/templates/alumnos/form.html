@@ -140,19 +140,26 @@
                                     <div class="mb-3">
                                         <label for="nombre" class="form-label">Nombre</label>
                                         <input type="text" class="form-control" id="nombre" th:field="*{nombre}"
-                                            required>
+                                            required
+                                            pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$"
+                                            title="Solo se permiten letras y espacios">
                                     </div>
 
                                     <div class="mb-3">
                                         <label for="apellido" class="form-label">Apellido</label>
                                         <input type="text" class="form-control" id="apellido" th:field="*{apellido}"
-                                            required>
+                                            required
+                                            pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$"
+                                            title="Solo se permiten letras y espacios">
                                     </div>
                                     <div class="mb-3">
                                         <label for="dni" class="form-label">DNI</label>
-                                        <input type="text" class="form-control" id="dni" th:field="*{dni}" required>
+                                        <input type="text" class="form-control" id="dni" th:field="*{dni}"
+                                            required
+                                            pattern="^\d{8}$"
+                                            title="El DNI debe tener exactamente 8 dígitos">
                                         <div class="invalid-feedback">
-                                            El DNI es obligatorio.
+                                            El DNI debe tener exactamente 8 dígitos.
                                         </div>
                                     </div>
 
@@ -167,9 +174,12 @@
                                     <div class="mb-3">
                                         <label for="fechaNacimiento" class="form-label">Fecha de Nacimiento</label>
                                         <input type="date" class="form-control" id="fechaNacimiento"
-                                            th:field="*{fechaNacimiento}" required>
+                                            th:field="*{fechaNacimiento}"
+                                            required
+                                            max="{{#dates.format(#dates.createNow().minusYears(6), 'yyyy-MM-dd')}}"
+                                            title="La fecha de nacimiento debe ser al menos 6 años antes de la fecha actual">
                                         <div class="invalid-feedback">
-                                            La fecha de nacimiento es obligatoria.
+                                            La fecha de nacimiento debe ser al menos 6 años antes de la fecha actual.
                                         </div>
                                     </div>
 
@@ -265,9 +275,11 @@
                                         <input type="date" class="form-control" id="fechaInscripcion"
                                             th:field="*{fechaInscripcion}"
                                             th:value="${alumno.fechaInscripcion != null ? alumno.fechaInscripcion : #dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
-                                            required>
+                                            required
+                                            max="{{#dates.format(#dates.createNow(), 'yyyy-MM-dd')}}"
+                                            title="La fecha de inscripción no puede ser futura">
                                         <div class="invalid-feedback">
-                                            La fecha de inscripción es obligatoria.
+                                            La fecha de inscripción no puede ser futura.
                                         </div>
                                     </div>
 
