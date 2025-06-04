@@ -58,6 +58,39 @@
       transform: translateY(-5px);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
+    .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #2c3e50 0%, #3498db 100%);
+        }
+        .nav-link {
+            color: rgba(255, 255, 255, .8) !important;
+            padding: 1rem;
+            margin: 0.2rem 0;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+        }
+        .nav-link:hover {
+            color: #fff !important;
+            background: rgba(255, 255, 255, .1);
+        }
+        .nav-link.active {
+            background: rgba(255, 255, 255, .2);
+            color: #fff !important;
+        }
+        .nav-link i {
+            width: 25px;
+        }
+        .sidebar-heading {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        .card-header {
+            font-weight: 600;
+        }
   </style>
 </head>
 
@@ -65,71 +98,92 @@
   <div class="container-fluid">
     <div class="row">
       <!-- Sidebar -->
-      <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+      <div class="col-md-3 col-lg-2 d-md-block sidebar">
         <div class="position-sticky pt-3">
-          <div class="text-center mb-4">
-            <h4 class="text-white">MiEscuela360</h4>
-            <p class="text-white-50">Sistema de Gestión Educativa</p>
-          </div>
-          <ul class="nav flex-column">
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="fas fa-home"></i> Inicio
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/usuarios">
-                <i class="fas fa-users"></i> Gestión de Usuarios
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/alumnos">
-                <i class="fas fa-user-graduate"></i> Gestión de Alumnos
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/asistencias">
-                <i class="fas fa-clipboard-check"></i> Gestión de Asistencias
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/padres">
-                <i class="fas fa-male"></i> Gestión de Padres
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/madres">
-                <i class="fas fa-female"></i> Gestión de Madres
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/grados">
-                <i class="fas fa-graduation-cap"></i> Gestión de Grados
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/secciones">
-                <i class="fas fa-chalkboard"></i> Gestión de Secciones
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="/pagos">
-                <i class="fas fa-money-bill-wave"></i> Gestión de Pagos
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/reportes">
-                <i class="fas fa-chart-bar"></i> Reportes
-              </a>
-            </li>
-            <li class="nav-item mt-4">
-              <a class="nav-link text-danger" href="/logout">
-                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-              </a>
-            </li>
-          </ul>
+            <div class="text-center mb-4">
+                <h4 class="text-white">MiEscuela360</h4>
+                <p class="text-white-50">Sistema de Gestión Educativa</p>
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link " href="/">
+                        <i class="fas fa-home"></i> Inicio
+                    </a>
+                </li>
+                <!-- Sección de Gestión Académica -->
+                <li class="nav-item">
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white-50">
+                        <span>Gestión Académica</span>
+                    </h6>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link " href="/alumnos">
+                        <i class="fas fa-user-graduate"></i> Alumnos
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link " href="/grados">
+                        <i class="fas fa-school"></i> Grados
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/secciones">
+                        <i class="fas fa-chalkboard"></i> Secciones
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link " href="/asistencias">
+                        <i class="fas fa-clipboard-check"></i> Asistencias
+                    </a>
+                </li>
+  
+                <!-- Sección de Gestión de Familia -->
+                <li class="nav-item">
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white-50">
+                        <span>Gestión de Familia</span>
+                    </h6>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/padres">
+                        <i class="fas fa-male"></i> Padres
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link " href="/madres">
+                        <i class="fas fa-female"></i> Madres
+                    </a>
+                </li>
+  
+                <!-- Sección de Gestión Administrativa -->
+                <li class="nav-item">
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white-50">
+                        <span>Gestión Administrativa</span>
+                    </h6>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/pagos">
+                        <i class="fas fa-money-bill-wave"></i> Pagos
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/reportes">
+                        <i class="fas fa-chart-bar"></i> Reportes
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link " href="/usuarios">
+                        <i class="fas fa-users"></i> Usuarios
+                    </a>
+                </li>
+  
+                <li class="nav-item mt-4">
+                    <a class="nav-link text-danger" href="/logout">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </a>
+                </li>
+            </ul>
         </div>
-      </nav>
+    </div>
 
       <!-- Main content -->
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
