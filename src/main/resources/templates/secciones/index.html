@@ -4,10 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Asistencias - MiEscuela360</title>
+  <title>Gestión de Secciones - MiEscuela360</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <style>
     .sidebar {
       min-height: 100vh;
@@ -36,43 +35,14 @@
       width: 25px;
     }
 
-    .table th {
-      background-color: #f8f9fa;
-    }
-
     .btn-action {
-      width: 35px;
-      height: 35px;
+      width: 32px;
+      height: 32px;
       padding: 0;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       margin: 0 2px;
-    }
-
-    .badge-estado {
-      padding: 0.5em 0.7em;
-      border-radius: 0.25rem;
-    }
-
-    .estado-presente {
-      background-color: #28a745;
-      color: white;
-    }
-
-    .estado-tardanza {
-      background-color: #ffc107;
-      color: black;
-    }
-
-    .estado-ausente {
-      background-color: #dc3545;
-      color: white;
-    }
-
-    .estado-justificado {
-      background-color: #17a2b8;
-      color: white;
     }
   </style>
 </head>
@@ -104,7 +74,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="/asistencias">
+              <a class="nav-link" href="/asistencias">
                 <i class="fas fa-clipboard-check"></i> Gestión de Asistencias
               </a>
             </li>
@@ -117,17 +87,16 @@
               <a class="nav-link" href="/madres">
                 <i class="fas fa-female"></i> Gestión de Madres
               </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link " href="/grados">
-                <i class="fas fa-graduation-cap"></i> Gestión de Grados
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/secciones">
-                <i class="fas fa-chalkboard"></i> Gestión de Secciones
-              </a>
-            </li>
+              <li class="nav-item">
+                <a class="nav-link " href="/grados">
+                  <i class="fas fa-graduation-cap"></i> Gestión de Grados
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="/secciones">
+                  <i class="fas fa-chalkboard"></i> Gestión de Secciones
+                </a>
+              </li>
             <li class="nav-item">
               <a class="nav-link" href="/pagos">
                 <i class="fas fa-money-bill-wave"></i> Gestión de Pagos
@@ -151,85 +120,62 @@
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
           <h1 class="h2">
-            <i class="fas fa-clipboard-check text-warning me-2"></i>
-            Gestión de Asistencias
+            <i class="fas fa-chalkboard"></i> Gestión de Secciones
           </h1>
-          <a th:href="@{/asistencias/registrar}" class="btn btn-primary">
-            <i class="fa fa-plus"></i> Registrar Asistencias
-          </a>
-        </div>
-
-        <!-- Mensajes de alerta -->
-        <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
-          <span th:text="${mensaje}"></span>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-          <span th:text="${error}"></span>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-
-        <!-- Selector de fecha -->
-        <div class="card shadow-sm mb-4">
-          <div class="card-body">
-            <form th:action="@{/asistencias}" method="get" class="row g-3 align-items-center">
-              <div class="col-auto">
-                <label for="fecha" class="form-label fw-bold">Seleccionar fecha:</label>
-                <input type="date" id="fecha" name="fecha" class="form-control" th:value="${fecha}" required>
-              </div>
-              <div class="col-auto align-self-end">
-                <button type="submit" class="btn btn-primary mb-3">
-                  <i class="fas fa-search"></i> Buscar
-                </button>
-              </div>
-            </form>
+          <div class="btn-toolbar mb-2 mb-md-0">
+            <a href="/secciones/nuevo" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Nueva Sección
+            </a>
           </div>
         </div>
 
-        <!-- Tabla de Asistencias -->
+        <div th:if="${mensaje != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+          <i class="fas fa-check-circle me-2"></i> <span th:text="${mensaje}"></span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+          <i class="fas fa-exclamation-circle me-2"></i> <span th:text="${error}"></span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
         <div class="card shadow-sm">
-          <div class="card-header bg-light">
-            <h5 class="card-title mb-0">Asistencias del <span
-                th:text="${#temporals.format(fecha, 'dd/MM/yyyy')}"></span></h5>
-          </div>
           <div class="card-body">
             <div class="table-responsive">
               <table class="table table-striped table-hover">
                 <thead>
                   <tr>
-                    <th>Alumno</th>
-                    <th>DNI</th>
-                    <th>Grado/Sección</th>
+                    <th>Nombre</th>
+                    <th>Grado</th>
+                    <th>Descripción</th>
                     <th>Estado</th>
-                    <th>Observaciones</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr th:if="${asistencias.empty}">
-                    <td colspan="6" class="text-center">No hay asistencias registradas para esta fecha</td>
+                  <tr th:each="seccion : ${secciones}">
+                    <td th:text="${seccion.nombre}"></td>
+                    <td th:text="${seccion.grado != null ? seccion.grado.nombre : 'No asignado'}"></td>
+                    <td th:text="${seccion.descripcion}"></td>
+                    <td>
+                      <span th:if="${seccion.activo}" class="badge bg-success">Activo</span>
+                      <span th:unless="${seccion.activo}" class="badge bg-danger">Inactivo</span>
+                    </td>
+                    <td>
+                      <a th:href="@{/secciones/editar/{id}(id=${seccion.id})}" class="btn btn-warning btn-action"
+                        title="Editar">
+                        <i class="fas fa-edit"></i>
+                      </a>
+                      <a th:href="@{/secciones/toggle-estado/{id}(id=${seccion.id})}"
+                        th:class="${seccion.activo ? 'btn btn-danger btn-action' : 'btn btn-success btn-action'}"
+                        th:title="${seccion.activo ? 'Desactivar' : 'Activar'}"
+                        th:onclick="'return confirm(\'¿Está seguro de que desea ' + (${seccion.activo} ? 'desactivar' : 'activar') + ' esta sección?\');'">
+                        <i th:class="${seccion.activo ? 'fas fa-ban' : 'fas fa-check'}"></i>
+                      </a>
+                    </td>
                   </tr>
-                  <tr th:each="asistencia : ${asistencias}">
-                    <td th:text="${asistencia.alumno.nombre + ' ' + asistencia.alumno.apellido}"></td>
-                    <td th:text="${asistencia.alumno.dni}"></td>
-                    <td th:text="${asistencia.alumno.gradoActual + ' - ' + asistencia.alumno.seccionActual}"></td>
-                    <td>
-                      <span th:class="'badge badge-estado ' + 'estado-' + ${#strings.toLowerCase(asistencia.estado)}"
-                        th:text="${asistencia.estado}"></span>
-                    </td>
-                    <td th:text="${asistencia.observaciones}"></td>
-                    <td>
-                      <div class="btn-group" role="group">
-                        <a th:href="@{/asistencias/editar/{id}(id=${asistencia.id})}" class="btn btn-warning btn-sm"
-                          title="Editar">
-                          <i class="fa fa-edit"></i>
-                        </a>
-                        <a th:href="@{/asistencias/eliminar/{id}(id=${asistencia.id})}" class="btn btn-danger btn-sm"
-                          onclick="return confirm('¿Está seguro de eliminar esta asistencia?')" title="Eliminar">
-                          <i class="fa fa-trash"></i>
-                        </a>
-                      </div>
-                    </td>
+                  <tr th:if="${#lists.isEmpty(secciones)}">
+                    <td colspan="5" class="text-center">No hay secciones registradas</td>
                   </tr>
                 </tbody>
               </table>

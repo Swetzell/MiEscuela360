@@ -1,63 +1,198 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reportes - MiEscuela360</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         .reporte-card {
             margin-bottom: 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
         }
         .reporte-card:hover {
             transform: translateY(-5px);
-            transition: transform 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
-        .form-control {
+        .form-control, .form-select {
             margin-bottom: 10px;
+        }
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #2c3e50 0%, #3498db 100%);
+        }
+        .nav-link {
+            color: rgba(255, 255, 255, .8) !important;
+            padding: 1rem;
+            margin: 0.2rem 0;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+        }
+        .nav-link:hover {
+            color: #fff !important;
+            background: rgba(255, 255, 255, .1);
+        }
+        .nav-link.active {
+            background: rgba(255, 255, 255, .2);
+            color: #fff !important;
+        }
+        .nav-link i {
+            width: 25px;
+        }
+        .sidebar-heading {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        .card-header {
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
-    <div class="container py-4">
-        <h2 class="mb-4">Reportes del Sistema</h2>
-        
-        <!-- Reporte de Pagos -->
-        <div class="reporte-card">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Reporte de Pagos</h5>
-                </div>
-                <div class="card-body">
-                    <form action="/reportes/pagos/excel" method="GET" class="mb-3">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <label for="fechaInicio" class="form-label">Fecha Inicio</label>
-                                <input type="date" class="form-control" id="fechaInicio" name="fechaInicio">
-                            </div>
-                            <div class="col-md-3">
-                                <label for="fechaFin" class="form-label">Fecha Fin</label>
-                                <input type="date" class="form-control" id="fechaFin" name="fechaFin">
-                            </div>
-                            <div class="col-md-3">
-                                <label for="estado" class="form-label">Estado</label>
-                                <select class="form-control" id="estado" name="estado">
-                                    <option value="">Todos</option>
-                                    <option th:each="estado : ${estados}"
-                                            th:value="${estado}"
-                                            th:text="${estado}">
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <button type="submit" class="btn btn-success mt-4 w-100">
-                                    <i class="fas fa-file-excel"></i> Generar Excel
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block sidebar">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h4 class="text-white">MiEscuela360</h4>
+                        <p class="text-white-50">Sistema de Gestión Educativa</p>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">
+                                <i class="fas fa-home"></i> Inicio
+                            </a>
+                        </li>
+                        <!-- Sección de Gestión Académica -->
+                        <li class="nav-item">
+                            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white-50">
+                                <span>Gestión Académica</span>
+                            </h6>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/alumnos">
+                                <i class="fas fa-user-graduate"></i> Alumnos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/grados">
+                                <i class="fas fa-school"></i> Grados
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/secciones">
+                                <i class="fas fa-chalkboard"></i> Secciones
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/asistencias">
+                                <i class="fas fa-clipboard-check"></i> Asistencias
+                            </a>
+                        </li>
+
+                        <!-- Sección de Gestión de Familia -->
+                        <li class="nav-item">
+                            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white-50">
+                                <span>Gestión de Familia</span>
+                            </h6>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/padres">
+                                <i class="fas fa-male"></i> Padres
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/madres">
+                                <i class="fas fa-female"></i> Madres
+                            </a>
+                        </li>
+
+                        <!-- Sección de Gestión Administrativa -->
+                        <li class="nav-item">
+                            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white-50">
+                                <span>Gestión Administrativa</span>
+                            </h6>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/pagos">
+                                <i class="fas fa-money-bill-wave"></i> Pagos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/reportes">
+                                <i class="fas fa-chart-bar"></i> Reportes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/usuarios">
+                                <i class="fas fa-users"></i> Usuarios
+                            </a>
+                        </li>
+
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-danger" href="/logout">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">
+                        <i class="fas fa-chart-bar me-2"></i>Reportes del Sistema
+                    </h1>
+                </div>
+
+                <div class="container py-4">
+                    <!-- Reporte de Pagos -->
+                    <div class="reporte-card">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">Reporte de Pagos</h5>
+                            </div>
+                            <div class="card-body">
+                                <form action="/reportes/pagos/excel" method="GET" class="mb-3">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <label for="fechaInicio" class="form-label">Fecha Inicio</label>
+                                            <input type="date" class="form-control" id="fechaInicio" name="fechaInicio">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="fechaFin" class="form-label">Fecha Fin</label>
+                                            <input type="date" class="form-control" id="fechaFin" name="fechaFin">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="estado" class="form-label">Estado</label>
+                                            <select class="form-control" id="estado" name="estado">
+                                                <option value="">Todos</option>
+                                                <option th:each="estado : ${estados}"
+                                                        th:value="${estado}"
+                                                        th:text="${estado}">
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <button type="submit" class="btn btn-success mt-4 w-100">
+                                                <i class="fas fa-file-excel"></i> Generar Excel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 

@@ -4,10 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Editar Asistencia - MiEscuela360</title>
+  <title>Formulario de Sección - MiEscuela360</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <style>
     .sidebar {
       min-height: 100vh;
@@ -34,45 +33,6 @@
 
     .nav-link i {
       width: 25px;
-    }
-
-    .table th {
-      background-color: #f8f9fa;
-    }
-
-    .btn-action {
-      width: 35px;
-      height: 35px;
-      padding: 0;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 2px;
-    }
-
-    .badge-estado {
-      padding: 0.5em 0.7em;
-      border-radius: 0.25rem;
-    }
-
-    .estado-presente {
-      background-color: #28a745;
-      color: white;
-    }
-
-    .estado-tardanza {
-      background-color: #ffc107;
-      color: black;
-    }
-
-    .estado-ausente {
-      background-color: #dc3545;
-      color: white;
-    }
-
-    .estado-justificado {
-      background-color: #17a2b8;
-      color: white;
     }
   </style>
 </head>
@@ -104,7 +64,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="/asistencias">
+              <a class="nav-link" href="/asistencias">
                 <i class="fas fa-clipboard-check"></i> Gestión de Asistencias
               </a>
             </li>
@@ -119,12 +79,12 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link " href="/grados">
+              <a class="nav-link" href="/grados">
                 <i class="fas fa-graduation-cap"></i> Gestión de Grados
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/secciones">
+              <a class="nav-link active" href="/secciones">
                 <i class="fas fa-chalkboard"></i> Gestión de Secciones
               </a>
             </li>
@@ -151,85 +111,60 @@
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
           <h1 class="h2">
-            <i class="fas fa-clipboard-check text-warning me-2"></i>
-            Editar Asistencia
+            <i class="fas fa-chalkboard"></i> <span th:text="${titulo}">Formulario de Sección</span>
           </h1>
-          <a th:href="@{/asistencias}" class="btn btn-secondary">
-            <i class="fa fa-arrow-left"></i> Volver a Asistencias
-          </a>
+          <div class="btn-toolbar mb-2 mb-md-0">
+            <a href="/secciones" class="btn btn-secondary">
+              <i class="fas fa-arrow-left"></i> Volver
+            </a>
+          </div>
         </div>
 
-        <!-- Formulario de Edición -->
         <div class="card shadow-sm">
-          <div class="card-header bg-light">
-            <h5 class="card-title mb-0">Asistencia de <span
-                th:text="${asistencia.alumno.nombre + ' ' + asistencia.alumno.apellido}"></span></h5>
-          </div>
           <div class="card-body">
-            <form th:action="@{/asistencias/actualizar}" method="post" th:object="${asistencia}">
+            <form th:action="@{/secciones/guardar}" th:object="${seccion}" method="post" class="needs-validation" novalidate>
               <input type="hidden" th:field="*{id}">
 
               <div class="row mb-3">
                 <div class="col-md-6">
-                  <label class="form-label fw-bold">Alumno:</label>
-                  <div class="form-control-plaintext">
-                    <i class="fas fa-user-graduate text-primary me-2"></i>
-                    <span th:text="${asistencia.alumno.nombre + ' ' + asistencia.alumno.apellido}"></span>
+                  <label for="nombre" class="form-label">Nombre</label>
+                  <input type="text" class="form-control" id="nombre" th:field="*{nombre}" required>
+                  <div class="invalid-feedback">
+                    Por favor ingrese el nombre de la sección.
                   </div>
                 </div>
+
                 <div class="col-md-6">
-                  <label class="form-label fw-bold">DNI:</label>
-                  <div class="form-control-plaintext">
-                    <i class="fas fa-id-card text-secondary me-2"></i>
-                    <span th:text="${asistencia.alumno.dni}"></span>
+                  <label for="grado" class="form-label">Grado</label>
+                  <select class="form-select" id="grado" th:field="*{grado}" required>
+                    <option value="">Seleccione un grado</option>
+                    <option th:each="grado : ${grados}" 
+                            th:value="${grado.id}" 
+                            th:text="${grado.nombre}">
+                    </option>
+                  </select>
+                  <div class="invalid-feedback">
+                    Por favor seleccione un grado.
                   </div>
                 </div>
               </div>
 
-              <div class="row mb-3">
-                <div class="col-md-6">
-                  <label class="form-label fw-bold">Grado/Sección:</label>
-                  <div class="form-control-plaintext">
-                    <i class="fas fa-chalkboard text-info me-2"></i>
-                    <span th:text="${asistencia.alumno.gradoActual + ' - ' + asistencia.alumno.seccionActual}"></span>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label fw-bold">Fecha:</label>
-                  <div class="form-control-plaintext">
-                    <i class="fas fa-calendar-alt text-success me-2"></i>
-                    <span th:text="${#temporals.format(asistencia.fecha, 'dd/MM/yyyy')}"></span>
-                  </div>
-                </div>
+              <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción</label>
+                <textarea class="form-control" id="descripcion" th:field="*{descripcion}" rows="3"></textarea>
               </div>
 
-              <div class="row mb-3">
-                <div class="col-md-6">
-                  <label class="form-label fw-bold">Estado de Asistencia:</label>
-                  <div class="d-flex flex-column mt-2">
-                    <div class="form-check form-check-inline mb-2" th:each="estado : ${estadosAsistencia}">
-                      <input class="form-check-input" type="radio" th:field="*{estado}" th:value="${estado}"
-                        th:id="'estado-' + ${estado}">
-                      <label class="form-check-label" th:for="'estado-' + ${estado}">
-                        <span th:class="'badge badge-estado estado-' + ${#strings.toLowerCase(estado)}"
-                          th:text="${estado}"></span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <label for="observaciones" class="form-label fw-bold">Observaciones:</label>
-                  <textarea class="form-control" id="observaciones" th:field="*{observaciones}" rows="4"
-                    placeholder="Añada observaciones si es necesario"></textarea>
-                </div>
+              <div class="mb-3 form-check form-switch">
+                <input type="checkbox" class="form-check-input" id="activo" th:field="*{activo}">
+                <label class="form-check-label" for="activo">Activo</label>
               </div>
 
-              <div class="mt-4 text-end">
-                <a th:href="@{/asistencias}" class="btn btn-secondary me-2">
-                  <i class="fas fa-times"></i> Cancelar
+              <div class="d-flex justify-content-end gap-2 mt-4">
+                <a href="/secciones" class="btn btn-secondary">
+                  <i class="fas fa-times me-1"></i> Cancelar
                 </a>
                 <button type="submit" class="btn btn-primary">
-                  <i class="fas fa-save"></i> Guardar Cambios
+                  <i class="fas fa-save me-1"></i> Guardar
                 </button>
               </div>
             </form>
@@ -240,6 +175,28 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Script para validación de formulario
+    (function () {
+      'use strict'
+
+      // Obtener todos los formularios a los que queremos aplicar estilos de validación de Bootstrap personalizados
+      var forms = document.querySelectorAll('.needs-validation')
+
+      // Bucle sobre ellos y evitar el envío
+      Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+          form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+
+            form.classList.add('was-validated')
+          }, false)
+        })
+    })()
+  </script>
 </body>
 
 </html>

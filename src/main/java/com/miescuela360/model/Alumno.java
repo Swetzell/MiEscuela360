@@ -32,11 +32,20 @@ public class Alumno {
     @Column(nullable = true)
     private String email;
     
+    // Mantener estos campos por compatibilidad con datos existentes
     @Column(name = "grado_actual")
     private String gradoActual;
     
     @Column(name = "seccion_actual")
     private String seccionActual;
+    
+    @ManyToOne
+    @JoinColumn(name = "grado_id")
+    private Grado grado;
+    
+    @ManyToOne
+    @JoinColumn(name = "seccion_id")
+    private Seccion seccion;
     
     @Column(name = "estado_academico")
     @Enumerated(EnumType.STRING)
@@ -241,4 +250,26 @@ public class Alumno {
     public void setUltimoPago(LocalDate ultimoPago) {
         this.ultimoPago = ultimoPago;
     }
-} 
+
+    public Grado getGrado() {
+        return grado;
+    }
+
+    public void setGrado(Grado grado) {
+        this.grado = grado;
+        if (grado != null) {
+            this.gradoActual = grado.getNombre(); // Mantener sincronizado para compatibilidad
+        }
+    }
+
+    public Seccion getSeccion() {
+        return seccion;
+    }
+
+    public void setSeccion(Seccion seccion) {
+        this.seccion = seccion;
+        if (seccion != null) {
+            this.seccionActual = seccion.getNombre(); // Mantener sincronizado para compatibilidad
+        }
+    }
+}

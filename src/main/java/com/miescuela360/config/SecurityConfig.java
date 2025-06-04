@@ -16,14 +16,14 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig {
 
     @Autowired
-    private AutenticacionService autenticacionService;
-
-    @Bean
+    private AutenticacionService autenticacionService;    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                 .requestMatchers("/login").permitAll()
+                .requestMatchers("/public-api-test/**").permitAll() // Permitir acceso a endpoints de diagnóstico público
+                .requestMatchers("/api/diagnose/**").hasRole("ADMIN") // Solo admins pueden acceder a los diagnósticos de API
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

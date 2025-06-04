@@ -83,6 +83,16 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link " href="/grados">
+                              <i class="fas fa-graduation-cap"></i> Gestión de Grados
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" href="/secciones">
+                              <i class="fas fa-chalkboard"></i> Gestión de Secciones
+                            </a>
+                          </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="/pagos">
                                 <i class="fas fa-money-bill-wave"></i> Gestión de Pagos
                             </a>
@@ -140,27 +150,30 @@
                                     <div class="mb-3">
                                         <label for="nombre" class="form-label">Nombre</label>
                                         <input type="text" class="form-control" id="nombre" th:field="*{nombre}"
-                                            required
-                                            pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$"
+                                            required pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$"
                                             title="Solo se permiten letras y espacios">
                                     </div>
 
                                     <div class="mb-3">
                                         <label for="apellido" class="form-label">Apellido</label>
                                         <input type="text" class="form-control" id="apellido" th:field="*{apellido}"
-                                            required
-                                            pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$"
+                                            required pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$"
                                             title="Solo se permiten letras y espacios">
                                     </div>
                                     <div class="mb-3">
                                         <label for="dni" class="form-label">DNI</label>
-                                        <input type="text" class="form-control" id="dni" th:field="*{dni}"
-                                            required
-                                            pattern="^\d{8}$"
-                                            title="El DNI debe tener exactamente 8 dígitos">
-                                        <div class="invalid-feedback">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="dni" th:field="*{dni}" required
+                                                pattern="^\d{8}$" title="El DNI debe tener exactamente 8 dígitos">
+                                            <button class="btn btn-primary" type="button"
+                                                id="validarDniBtn">Validar</button>
+                                        </div>
+                                        <div class="invalid-feedback" id="dni-invalid-feedback">
                                             El DNI debe tener exactamente 8 dígitos.
                                         </div>
+                                        <div class="valid-feedback" id="dni-valid-feedback" style="display: none;">
+                                        </div>
+                                        <div class="text-danger" id="dni-error" style="display: none;"></div>
                                     </div>
 
                                     <div class="mb-3">
@@ -174,8 +187,7 @@
                                     <div class="mb-3">
                                         <label for="fechaNacimiento" class="form-label">Fecha de Nacimiento</label>
                                         <input type="date" class="form-control" id="fechaNacimiento"
-                                            th:field="*{fechaNacimiento}"
-                                            required
+                                            th:field="*{fechaNacimiento}" required
                                             max="{{#dates.format(#dates.createNow().minusYears(6), 'yyyy-MM-dd')}}"
                                             title="La fecha de nacimiento debe ser al menos 6 años antes de la fecha actual">
                                         <div class="invalid-feedback">
@@ -213,27 +225,29 @@
                                         Datos Académicos
                                     </h5>
                                     <div class="mb-3">
-                                        <label for="gradoActual" class="form-label">Grado Actual</label>
-                                        <select class="form-select" id="gradoActual" th:field="*{gradoActual}" required>
+                                        <label for="grado" class="form-label">Grado</label>
+                                        <select class="form-select" id="grado" th:field="*{grado}" required>
                                             <option value="">Seleccione un grado</option>
-                                            <option th:each="grado : ${grados}" th:value="${grado}" th:text="${grado}">
+                                            <option th:each="grado : ${grados}" th:value="${grado.id}"
+                                                th:text="${grado.nombre + ' - ' + grado.descripcion}"
+                                                th:disabled="${!grado.activo}">
                                             </option>
                                         </select>
                                         <div class="invalid-feedback">
-                                            El grado actual es obligatorio.
+                                            El grado es obligatorio.
                                         </div>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="seccionActual" class="form-label">Sección Actual</label>
-                                        <select class="form-select" id="seccionActual" th:field="*{seccionActual}"
-                                            required>
+                                        <label for="seccion" class="form-label">Sección</label>
+                                        <select class="form-select" id="seccion" th:field="*{seccion}" required>
                                             <option value="">Seleccione una sección</option>
-                                            <option th:each="seccion : ${secciones}" th:value="${seccion}"
-                                                th:text="${seccion}">
+                                            <option th:each="seccion : ${secciones}" th:value="${seccion.id}"
+                                                th:text="${seccion.nombre + ' - ' + seccion.descripcion}"
+                                                th:disabled="${!seccion.activo}">
                                             </option>
                                         </select>
                                         <div class="invalid-feedback">
-                                            La sección actual es obligatoria.
+                                            La sección es obligatoria.
                                         </div>
                                     </div>
 
@@ -275,8 +289,7 @@
                                         <input type="date" class="form-control" id="fechaInscripcion"
                                             th:field="*{fechaInscripcion}"
                                             th:value="${alumno.fechaInscripcion != null ? alumno.fechaInscripcion : #dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
-                                            required
-                                            max="{{#dates.format(#dates.createNow(), 'yyyy-MM-dd')}}"
+                                            required max="{{#dates.format(#dates.createNow(), 'yyyy-MM-dd')}}"
                                             title="La fecha de inscripción no puede ser futura">
                                         <div class="invalid-feedback">
                                             La fecha de inscripción no puede ser futura.
@@ -364,6 +377,91 @@
                     event.preventDefault();
                     alert('Por favor, corrija los siguientes errores:\n' + errorMessage);
                 }
+            });
+
+            // Validación de DNI con la API
+            document.getElementById('validarDniBtn').addEventListener('click', function () {
+                const dniInput = document.getElementById('dni');
+                const dni = dniInput.value.trim();
+                const nombreInput = document.getElementById('nombre');
+                const apellidoInput = document.getElementById('apellido');
+                const validFeedback = document.getElementById('dni-valid-feedback');
+                const invalidFeedback = document.getElementById('dni-invalid-feedback');
+                const dniError = document.getElementById('dni-error');
+
+                // Reset previous feedback
+                validFeedback.style.display = 'none';
+                invalidFeedback.style.display = 'none';
+                dniError.style.display = 'none';
+
+                if (!dni || dni.length !== 8 || !/^\d+$/.test(dni)) {
+                    dniError.textContent = 'El DNI debe tener exactamente 8 dígitos numéricos.';
+                    dniError.style.display = 'block';
+                    return;
+                }
+
+                // Show loading indicator
+                validFeedback.textContent = 'Validando DNI...';
+                validFeedback.style.display = 'block';
+
+                // Call our API endpoint
+                console.log('Enviando solicitud para validar DNI:', dni);
+
+                fetch('/alumnos/validar-dni?dni=' + dni, {
+                    method: 'POST'
+                })
+                    .then(response => {
+                        console.log('Respuesta HTTP:', response.status, response.statusText);
+                        if (!response.ok) {
+                            throw new Error(`Error de servidor: ${response.status} ${response.statusText}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Datos recibidos:', data);
+
+                        if (data.success) {
+                            validFeedback.textContent = 'DNI válido: ' + data.nombre;
+                            validFeedback.style.display = 'block';
+                            dniInput.classList.add('is-valid');
+                            dniInput.classList.remove('is-invalid');
+                            dniError.style.display = 'none';
+
+                            // Si los campos nombre y apellido están vacíos, autocompletarlos
+                            if (!nombreInput.value && !apellidoInput.value && data.nombre) {
+                                // Dividir el nombre completo (asume formato: APELLIDOS NOMBRES)
+                                const nombreCompleto = data.nombre.split(' ');
+                                if (nombreCompleto.length >= 3) {
+                                    // Los dos primeros segmentos suelen ser los apellidos
+                                    apellidoInput.value = nombreCompleto[0] + ' ' + nombreCompleto[1];
+                                    // El resto son los nombres
+                                    nombreInput.value = nombreCompleto.slice(2).join(' ');
+                                } else if (nombreCompleto.length == 2) {
+                                    apellidoInput.value = nombreCompleto[0];
+                                    nombreInput.value = nombreCompleto[1];
+                                }
+                            }
+                        } else {
+                            let mensajeError = 'No se pudo validar el DNI.';
+                            if (data.nombre && data.nombre.startsWith('Error:')) {
+                                mensajeError += ' ' + data.nombre;
+                            }
+                            console.error('Error de validación:', mensajeError);
+                            dniError.textContent = mensajeError;
+                            dniError.style.display = 'block';
+                            validFeedback.style.display = 'none';
+                            dniInput.classList.add('is-invalid');
+                            dniInput.classList.remove('is-valid');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error en fetch:', error);
+                        dniError.textContent = `Error al validar el DNI: ${error.message}`;
+                        dniError.style.display = 'block';
+                        validFeedback.style.display = 'none';
+                        dniInput.classList.add('is-invalid');
+                        dniInput.classList.remove('is-valid');
+                    });
             });
         });
     </script>

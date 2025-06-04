@@ -19,34 +19,64 @@
             <i class="fas fa-home"></i> Inicio
           </a>
         </li>
+        <!-- Sección de Gestión Académica -->
         <li class="nav-item">
-          <a class="nav-link" th:classappend="${activeLink == 'usuarios'} ? 'active' : ''" href="/usuarios">
-            <i class="fas fa-users"></i> Gestión de Usuarios
-          </a>
+          <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white-50">
+            <span>Gestión Académica</span>
+          </h6>
         </li>
         <li class="nav-item">
           <a class="nav-link" th:classappend="${activeLink == 'alumnos'} ? 'active' : ''" href="/alumnos">
-            <i class="fas fa-user-graduate"></i> Gestión de Alumnos
+            <i class="fas fa-user-graduate"></i> Alumnos
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:classappend="${activeLink == 'grados'} ? 'active' : ''" href="/grados">
+            <i class="fas fa-school"></i> Grados
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:classappend="${activeLink == 'secciones'} ? 'active' : ''" href="/secciones">
+            <i class="fas fa-chalkboard"></i> Secciones
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" th:classappend="${activeLink == 'asistencias'} ? 'active' : ''" href="/asistencias">
-            <i class="fas fa-clipboard-check"></i> Gestión de Asistencias
+            <i class="fas fa-clipboard-check"></i> Asistencias
           </a>
+        </li>
+
+        <!-- Sección de Gestión de Familia -->
+        <li class="nav-item">
+          <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white-50">
+            <span>Gestión de Familia</span>
+          </h6>
         </li>
         <li class="nav-item">
           <a class="nav-link" th:classappend="${activeLink == 'padres'} ? 'active' : ''" href="/padres">
-            <i class="fas fa-male"></i> Gestión de Padres
+            <i class="fas fa-male"></i> Padres
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" th:classappend="${activeLink == 'madres'} ? 'active' : ''" href="/madres">
-            <i class="fas fa-female"></i> Gestión de Madres
+            <i class="fas fa-female"></i> Madres
           </a>
+        </li>
+
+        <!-- Sección de Gestión Administrativa -->
+        <li class="nav-item">
+          <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white-50">
+            <span>Gestión Administrativa</span>
+          </h6>
         </li>
         <li class="nav-item">
           <a class="nav-link" th:classappend="${activeLink == 'pagos'} ? 'active' : ''" href="/pagos">
-            <i class="fas fa-money-bill-wave"></i> Gestión de Pagos
+            <i class="fas fa-money-bill-wave"></i> Pagos
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:classappend="${activeLink == 'usuarios'} ? 'active' : ''" href="/usuarios">
+            <i class="fas fa-users"></i> Usuarios
           </a>
         </li>
         <li class="nav-item">
@@ -54,6 +84,7 @@
             <i class="fas fa-chart-bar"></i> Reportes
           </a>
         </li>
+
         <li class="nav-item mt-4">
           <a class="nav-link text-danger" href="/logout">
             <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
