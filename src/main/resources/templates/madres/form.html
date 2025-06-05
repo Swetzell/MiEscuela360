@@ -219,10 +219,22 @@
 
                                     <div class="mb-3">
                                         <label for="dni" class="form-label">DNI</label>
-                                        <input type="text" class="form-control" id="dni" th:field="*{dni}"
-                                            required
-                                            pattern="^\d{8}$"
-                                            title="El DNI debe tener exactamente 8 dígitos">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="dni" th:field="*{dni}"
+                                                required
+                                                pattern="^\d{8}$"
+                                                title="El DNI debe tener exactamente 8 dígitos">
+                                            <button class="btn btn-outline-secondary" type="button" id="validarDniBtn">
+                                                <i class="fas fa-check-circle"></i> Validar DNI
+                                            </button>
+                                        </div>
+                                        <div id="dniValidationResult" class="mt-2" style="display: none;">
+                                            <div class="alert alert-success alert-dismissible fade show mb-0" role="alert">
+                                                <i class="fas fa-check-circle me-2"></i>
+                                                <span id="dniValidationMessage"></span>
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="mb-3">
@@ -271,6 +283,81 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const validarDniBtn = document.getElementById('validarDniBtn');
+            const dniInput = document.getElementById('dni');
+            const dniValidationResult = document.getElementById('dniValidationResult');
+            const dniValidationMessage = document.getElementById('dniValidationMessage');
+
+            validarDniBtn.addEventListener('click', function() {
+                const dni = dniInput.value.trim();
+                
+                // Validate DNI format
+                if (!/^\d{8}$/.test(dni)) {
+                    showValidationResult('Por favor ingrese un DNI válido de 8 dígitos', 'danger');
+                    return;
+                }
+
+                // Show loading state
+                const originalBtnText = validarDniBtn.innerHTML;
+                validarDniBtn.disabled = true;
+                validarDniBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Validando...';
+
+                // Make API call
+                fetch(`/api-test/peru/${dni}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success && data.data) {
+                            const nombreCompleto = data.data.nombre_completo || '';
+                            const nombres = data.data.nombres || '';
+                            const apellidoPaterno = data.data.apellido_paterno || '';
+                            const apellidoMaterno = data.data.apellido_materno || '';
+                            
+                            // Auto-fill the form fields
+                            document.getElementById('nombre').value = nombres;
+                            document.getElementById('apellido').value = `${apellidoPaterno} ${apellidoMaterno}`.trim();
+                            
+                            // Show success message
+                            showValidationResult(`DNI válido: ${nombreCompleto}`, 'success');
+                        } else {
+                            showValidationResult('No se pudo validar el DNI. Por favor verifique el número.', 'warning');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al validar DNI:', error);
+                        showValidationResult('Error al conectar con el servicio de validación', 'danger');
+                    })
+                    .finally(() => {
+                        // Reset button state
+                        validarDniBtn.disabled = false;
+                        validarDniBtn.innerHTML = originalBtnText;
+                    });
+            });
+
+            function showValidationResult(message, type) {
+                const alertDiv = dniValidationResult.querySelector('.alert');
+                const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+                
+                // Update alert content
+                alertDiv.className = `alert alert-${type} alert-dismissible fade show mb-0`;
+                alertDiv.innerHTML = `
+                    <i class="fas ${icon} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                
+                // Show the result
+                dniValidationResult.style.display = 'block';
+                
+                // Auto-hide after 10 seconds
+                setTimeout(() => {
+                    const alert = new bootstrap.Alert(alertDiv);
+                    alert.close();
+                }, 10000);
+            }
+        });
+    </script>
 </body>
 
 </html>
