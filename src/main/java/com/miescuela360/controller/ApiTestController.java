@@ -1,9 +1,11 @@
-package com.miescuela360.controller;
+                    package com.miescuela360.controller;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,34 +18,37 @@ import java.util.Map;
 @RequestMapping("/api-test")
 public class ApiTestController {
 
-    @Value("${api.migo.token}")
+    @Value("${api.peru.token}")
     private String apiToken;
     
     private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
     
     public ApiTestController(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
+        this.objectMapper = new ObjectMapper();
     }
-      /**
-     * Endpoint para probar directamente la API de MiGo
+    
+    /**
+     * Endpoint para probar directamente la API de apiperu.dev
      */
-    @GetMapping("/migo/{dni}")
-    public ResponseEntity<Object> testMigoApi(@PathVariable String dni) {
+    @GetMapping("/peru/{dni}")
+    public ResponseEntity<Object> testPeruApi(@PathVariable String dni) {
         try {
-            String apiUrl = "https://api.migo.pe/api/v1/dni";
+            String apiUrl = "https://apiperu.dev/api/dni";
             
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("Accept", "application/json");
+            headers.set("Authorization", "Bearer " + apiToken);
             headers.set("User-Agent", "MiEscuela360-JavaClient/1.0");
             
             // Log del token enmascarado (por seguridad)
             String tokenMasked = apiToken.length() > 8 ? 
                 apiToken.substring(0, 4) + "..." + apiToken.substring(apiToken.length() - 4) : apiToken;
-            System.out.println("Probando API MiGo con token parcial: " + tokenMasked);
+            System.out.println("Probando API Peru con token parcial: " + tokenMasked);
             
             Map<String, String> requestBody = new HashMap<>();
-            requestBody.put("token", apiToken);
             requestBody.put("dni", dni);
             
             HttpEntity<Map<String, String>> request = new HttpEntity<>(requestBody, headers);
@@ -54,21 +59,30 @@ public class ApiTestController {
             System.out.println("Headers: " + headers);
             
             // Ejecutamos la llamada directamente y devolvemos la respuesta raw
-            ResponseEntity<Object> response = restTemplate.exchange(
+            ResponseEntity<String> response = restTemplate.exchange(
                 apiUrl, 
                 HttpMethod.POST, 
                 request, 
-                Object.class
+                String.class
             );
             
             System.out.println("Respuesta exitosa. Código: " + response.getStatusCode());
             
+            // Procesar la respuesta
+            JsonNode responseBody = objectMapper.readTree(response.getBody());
+            
             // Incluir información de diagnóstico en la respuesta
             Map<String, Object> enhancedResponse = new HashMap<>();
-            enhancedResponse.put("apiResponse", response.getBody());
+            enhancedResponse.put("apiResponse", responseBody);
             enhancedResponse.put("status", response.getStatusCode().value());
-            enhancedResponse.put("success", true);
-            enhancedResponse.put("diagnosticInfo", "La API respondió correctamente");
+            enhancedResponse.put("success", responseBody.path("success").asBoolean());
+            
+            if (responseBody.path("success").asBoolean()) {
+                enhancedResponse.put("diagnosticInfo", "La API respondió correctamente");
+                enhancedResponse.put("data", responseBody.path("data"));
+            } else {
+                enhancedResponse.put("diagnosticInfo", responseBody.path("message").asText("Error desconocido"));
+            }
             
             return ResponseEntity.ok()
                 .header("X-Api-Status", "SUCCESS")
@@ -79,7 +93,23 @@ public class ApiTestController {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("error", ex.getClass().getName());
             errorResponse.put("status", ex.getStatusCode().value());
-            errorResponse.put("message", ex.getMessage());
+            
+            // Intentar extraer el mensaje de error del cuerpo de la respuesta
+            String errorMessage = ex.getResponseBodyAsString();
+            try {
+                if (errorMessage != null && !errorMessage.isEmpty()) {
+                    JsonNode errorNode = objectMapper.readTree(errorMessage);
+                    errorMessage = errorNode.has("message") ? 
+                        errorNode.get("message").asText() : 
+                        ex.getStatusText();
+                } else {
+                    errorMessage = ex.getStatusText();
+                }
+            } catch (Exception e) {
+                errorMessage = ex.getStatusText();
+            }
+            
+            errorResponse.put("message", errorMessage);
             
             // Manejo específico para errores HTTP
             String diagnosticMsg = "";
@@ -88,87 +118,39 @@ public class ApiTestController {
                     diagnosticMsg = "Error en la solicitud: es posible que el formato del DNI sea incorrecto.";
                     break;
                 case 401:
-                    diagnosticMsg = "Error de autenticación: el token no fue reconocido.";
+                    diagnosticMsg = "Error de autenticación: el token no fue reconocido o ha expirado.";
+                    errorResponse.put("recomendacion", "Verifique que el token sea correcto y esté activo.");
                     break;
                 case 403:
-                    diagnosticMsg = "Acceso prohibido: el token probablemente ha expirado o ha sido revocado.";
-                    errorResponse.put("recomendacion", "Contacte al proveedor de la API MiGo para renovar su token.");
+                    diagnosticMsg = "Acceso prohibido: verifique los permisos del token.";
+                    errorResponse.put("recomendacion", "Verifique que el token tenga los permisos necesarios.");
                     break;
                 case 404:
                     diagnosticMsg = "DNI no encontrado en la base de datos de la API.";
                     break;
                 case 429:
                     diagnosticMsg = "Se ha excedido el límite de consultas a la API.";
+                    errorResponse.put("recomendacion", "Espere unos minutos antes de realizar más consultas o actualice su plan.");
                     break;
                 default:
-                    diagnosticMsg = "Error HTTP " + ex.getStatusCode() + ": " + ex.getMessage();
+                    diagnosticMsg = "Error en la comunicación con la API.";
             }
             
             errorResponse.put("diagnosticInfo", diagnosticMsg);
             
-            // Tratar de extraer más información del cuerpo de la respuesta
-            try {
-                if (ex.getResponseBodyAsString() != null && !ex.getResponseBodyAsString().isEmpty()) {
-                    errorResponse.put("apiErrorResponse", ex.getResponseBodyAsString());
-                }
-            } catch (Exception e) {
-                errorResponse.put("parsingError", "No se pudo extraer el mensaje de error detallado");
-            }
-            
-            return ResponseEntity
-                .status(ex.getStatusCode())
+            return ResponseEntity.status(ex.getStatusCode())
                 .header("X-Api-Status", "ERROR")
                 .header("X-Error-Code", String.valueOf(ex.getStatusCode().value()))
                 .body(errorResponse);
-        } catch (Exception e) {
+                
+        } catch (Exception ex) {
             Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("error", e.getClass().getName());
-            errorResponse.put("message", e.getMessage());
-            errorResponse.put("diagnosticInfo", "Error no relacionado con HTTP: " + e.getMessage());
+            errorResponse.put("error", ex.getClass().getName());
+            errorResponse.put("message", ex.getMessage());
+            errorResponse.put("diagnosticInfo", "Error inesperado al procesar la solicitud");
             
-            return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .header("X-Api-Status", "ERROR")
-                .header("X-Error-Type", e.getClass().getName())
-                .body(errorResponse);
-        }
-    }
-    
-    /**
-     * Endpoint para probar API gratuita alternativa
-     */
-    @GetMapping("/free/{dni}")
-    public ResponseEntity<Object> testFreeApi(@PathVariable String dni) {
-        try {
-            String apiUrl = "https://api.apis.net.pe/v1/dni/" + dni;
-            
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Accept", "application/json");
-            
-            HttpEntity<?> request = new HttpEntity<>(headers);
-            
-            // Ejecutamos la llamada directamente y devolvemos la respuesta raw
-            ResponseEntity<Object> response = restTemplate.exchange(
-                apiUrl, 
-                HttpMethod.GET, 
-                request, 
-                Object.class
-            );
-            
-            return ResponseEntity.ok()
-                .header("X-Api-Status", "SUCCESS")
-                .header("X-Response-Code", response.getStatusCode().toString())
-                .body(response.getBody());
-            
-        } catch (Exception e) {
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("error", e.getClass().getName());
-            errorResponse.put("message", e.getMessage());
-            
-            return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .header("X-Api-Status", "ERROR")
-                .header("X-Error-Type", e.getClass().getName())
                 .body(errorResponse);
         }
     }
