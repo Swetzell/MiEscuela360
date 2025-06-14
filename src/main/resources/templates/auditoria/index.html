@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auditoría - MiEscuela360</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #2c3e50 0%, #3498db 100%);
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, .8) !important;
+            padding: 1rem;
+            margin: 0.2rem 0;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #fff !important;
+            background: rgba(255, 255, 255, .1);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, .2);
+            color: #fff !important;
+        }
+
+        .nav-link i {
+            width: 25px;
+        }
+
+        .json-viewer {
+            max-height: 300px;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            font-size: 0.9em;
+        }
+
+        .diff-added {
+            background-color: #d4edda;
+            text-decoration: none;
+        }
+
+        .diff-removed {
+            background-color: #f8d7da;
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block sidebar">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h4 class="text-white">MiEscuela360</h4>
+                        <p class="text-white-50">Sistema de Gestión Educativa</p>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">
+                                <i class="fas fa-home"></i> Inicio
+                            </a>
+                        </li>
+                        <!-- Sección de Gestión Académica -->
+                        <li class="nav-item">
+                            <h6
+                                class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white-50">
+                                <span>Gestión Académica</span>
+                            </h6>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/alumnos">
+                                <i class="fas fa-user-graduate"></i> Alumnos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/grados">
+                                <i class="fas fa-school"></i> Grados
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/secciones">
+                                <i class="fas fa-chalkboard"></i> Secciones
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/asistencias">
+                                <i class="fas fa-clipboard-check"></i> Asistencias
+                            </a>
+                        </li>
+
+                        <!-- Sección de Gestión de Familia -->
+                        <li class="nav-item">
+                            <h6
+                                class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white-50">
+                                <span>Gestión de Familia</span>
+                            </h6>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/padres">
+                                <i class="fas fa-male"></i> Padres
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/madres">
+                                <i class="fas fa-female"></i> Madres
+                            </a>
+                        </li>
+
+                        <!-- Sección de Gestión Administrativa -->
+                        <li class="nav-item">
+                            <h6
+                                class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white-50">
+                                <span>Gestión Administrativa</span>
+                            </h6>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/auditoria">
+                                <i class="fas fa-clipboard-list"></i> Auditoría
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/pagos">
+                                <i class="fas fa-money-bill-wave"></i> Pagos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/reportes">
+                                <i class="fas fa-chart-bar"></i> Reportes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="/usuarios">
+                                <i class="fas fa-users"></i> Usuarios
+                            </a>
+                        </li>
+
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-danger" href="/logout">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Registro de Auditoría</h1>
+                </div>
+
+                <!-- Filtros -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 bg-primary text-white">
+                        <h6 class="m-0 font-weight-bold">Filtros</h6>
+                    </div>
+                    <div class="card-body">
+                        <form class="row g-3" id="filtroForm" method="get">
+                            <div class="col-md-4">
+                                <label for="entidad" class="form-label">Entidad</label>
+                                <select class="form-select" name="entidad" id="entidad">
+                                    <option value="">Todas las entidades</option>
+                                    <option th:each="entidad : ${entidades}" th:value="${entidad}" th:text="${entidad}"
+                                        th:selected="${entidad == entidadSeleccionada}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="accion" class="form-label">Acción</label>
+                                <select class="form-select" name="accion" id="accion">
+                                    <option value="">Todas las acciones</option>
+                                    <option th:each="accion : ${acciones}" th:value="${accion}" th:text="${accion}"
+                                        th:selected="${accion == accionSeleccionada}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary me-2">
+                                    <i class="fas fa-filter"></i> Filtrar
+                                </button>
+                                <a href="/auditoria" class="btn btn-secondary">
+                                    <i class="fas fa-times"></i> Limpiar
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Tabla de auditoría -->
+                <div class="card shadow">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped table-sm">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Fecha/Hora</th>
+                                        <th>Usuario</th>
+                                        <th>Acción</th>
+                                        <th>Entidad</th>
+                                        <th>ID Entidad</th>
+                                        <th>IP</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:if="${paginaAuditoria.empty}">
+                                        <td colspan="7" class="text-center">No hay registros de auditoría</td>
+                                    </tr>
+                                    <tr th:each="registro : ${paginaAuditoria.content}"
+                                        th:class="${registro.accion == 'ELIMINAR'} ? 'table-danger' : (${registro.accion == 'CREAR'} ? 'table-success' : '')">
+                                        <td th:text="${#temporals.format(registro.fechaHora, 'dd/MM/yyyy HH:mm:ss')}">
+                                        </td>
+                                        <td th:text="${registro.usuario.username}"></td>
+                                        <td>
+                                            <span
+                                                th:class="${registro.accion == 'CREAR'} ? 'badge bg-success' : (${registro.accion == 'ACTUALIZAR'} ? 'badge bg-warning' : 'badge bg-danger')"
+                                                th:text="${registro.accion}"></span>
+                                        </td>
+                                        <td th:text="${registro.entidad}"></td>
+                                        <td th:text="${registro.entidadId}"></td>
+                                        <td th:text="${registro.ip}"></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-primary btn-view"
+                                                data-bs-toggle="modal" data-bs-target="#detalleModal"
+                                                th:data-antes="${registro.datosAnteriores}"
+                                                th:data-despues="${registro.datosNuevos}">
+                                                <i class="fas fa-eye"></i> Ver detalles
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- Paginación -->
+                            <div th:if="${paginaAuditoria.totalPages > 1}" class="mt-4">
+                                <nav aria-label="Navegación de auditoría">
+                                    <ul class="pagination justify-content-center">
+                                        <li class="page-item"
+                                            th:classappend="${!paginaAuditoria.hasPrevious()} ? 'disabled'">
+                                            <a class="page-link"
+                                                th:href="@{/auditoria(page=${paginaAuditoria.number - 1}, entidad=${entidadSeleccionada}, accion=${accionSeleccionada})}">
+                                                Anterior
+                                            </a>
+                                        </li>
+
+                                        <li th:each="pageNum : ${#numbers.sequence(0, paginaAuditoria.totalPages - 1)}"
+                                            class="page-item"
+                                            th:classappend="${pageNum == paginaAuditoria.number} ? 'active'">
+                                            <a class="page-link"
+                                                th:href="@{/auditoria(page=${pageNum}, entidad=${entidadSeleccionada}, accion=${accionSeleccionada})}"
+                                                th:text="${pageNum + 1}"></a>
+                                        </li>
+
+                                        <li class="page-item"
+                                            th:classappend="${!paginaAuditoria.hasNext()} ? 'disabled'">
+                                            <a class="page-link"
+                                                th:href="@{/auditoria(page=${paginaAuditoria.number + 1}, entidad=${entidadSeleccionada}, accion=${accionSeleccionada})}">
+                                                Siguiente
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal para ver detalles -->
+    <div class="modal fade" id="detalleModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Detalles del Cambio</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Datos Anteriores:</h6>
+                            <div id="datosAnteriores" class="json-viewer border rounded p-2"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Datos Nuevos:</h6>
+                            <div id="datosNuevos" class="json-viewer border rounded p-2"></div>
+                        </div>
+                    </div>
+                    <div class="row mt-3" id="diffContainer" style="display: none;">
+                        <div class="col-12">
+                            <h6>Diferencias:</h6>
+                            <div id="diferencias" class="json-viewer border rounded p-2"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Cerrar
+                    </button>
+                    <button type="button" class="btn btn-primary" id="showDiffBtn">
+                        <i class="fas fa-exchange-alt me-1"></i> Mostrar diferencias
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsondiffpatch@0.4.1/public/build/jsondiffpatch.umd.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var antes = '';
+            var despues = '';
+            var diffContainerVisible = false;
+            var jsondiffpatch = window.jsondiffpatch;
+
+            $('.btn-view').on('click', function () {
+                antes = $(this).data('antes') || '{}';
+                despues = $(this).data('despues') || '{}';
+
+                try {
+                    $('#datosAnteriores').html(syntaxHighlight(JSON.parse(antes)));
+                } catch (e) {
+                    $('#datosAnteriores').html(antes || 'Sin datos');
+                }
+
+                try {
+                    $('#datosNuevos').html(syntaxHighlight(JSON.parse(despues)));
+                } catch (e) {
+                    $('#datosNuevos').html(despues || 'Sin datos');
+                }
+
+                // Reset diff view
+                diffContainerVisible = false;
+                $('#diffContainer').hide();
+                $('#showDiffBtn').html('<i class="fas fa-exchange-alt me-1"></i> Mostrar diferencias');
+            });
+
+            $('#showDiffBtn').on('click', function () {
+                if (!diffContainerVisible) {
+                    try {
+                        var delta = jsondiffpatch.diff(
+                            JSON.parse(antes || '{}'),
+                            JSON.parse(despues || '{}')
+                        );
+
+                        if (delta) {
+                            var diffHtml = jsondiffpatch.formatters.html.format(delta, antes);
+                            $('#diferencias').html(diffHtml);
+                        } else {
+                            $('#diferencias').html('<div class="alert alert-info mb-0">No hay diferencias</div>');
+                        }
+
+                        $('#diffContainer').show();
+                        $(this).html('<i class="fas fa-eye-slash me-1"></i> Ocultar diferencias');
+                        diffContainerVisible = true;
+                    } catch (e) {
+                        console.error('Error al calcular diferencias:', e);
+                        $('#diferencias').html('<div class="alert alert-warning mb-0">No se pudieron calcular las diferencias</div>');
+                        $('#diffContainer').show();
+                    }
+                } else {
+                    $('#diffContainer').hide();
+                    $(this).html('<i class="fas fa-exchange-alt me-1"></i> Mostrar diferencias');
+                    diffContainerVisible = false;
+                }
+            });
+
+            function syntaxHighlight(json) {
+                if (typeof json != 'string') {
+                    json = JSON.stringify(json, undefined, 2);
+                }
+                json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(\.\d*)?([eE][+\-]?\d+)?)/g, function (match) {
+                    var cls = 'text-primary';
+                    if (/^"/.test(match)) {
+                        if (/:$/.test(match)) {
+                            cls = 'text-success';
+                        } else {
+                            cls = 'text-dark';
+                        }
+                    } else if (/true|false/.test(match)) {
+                        cls = 'text-info';
+                    } else if (/null/.test(match)) {
+                        cls = 'text-muted';
+                    } else if (/\d+/.test(match)) {
+                        cls = 'text-danger';
+                    }
+                    return '<span class="' + cls + '">' + match + '</span>';
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

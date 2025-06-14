@@ -15,6 +15,9 @@ public class PadreService {
     @Autowired
     private PadreRepository padreRepository;
 
+    @Autowired
+    private AuditoriaService auditoriaService;
+
     @Transactional(readOnly = true)
     public List<Padre> findAll() {
         return padreRepository.findAll();
@@ -32,12 +35,31 @@ public class PadreService {
 
     @Transactional
     public Padre save(Padre padre) {
-        return padreRepository.save(padre);
+        Padre padreAnterior = null;
+        String accion = "CREAR";
+        
+        if (padre.getId() != null) {
+            padreAnterior = padreRepository.findById(padre.getId()).orElse(null);
+            accion = "ACTUALIZAR";
+        }
+        
+        Padre padreGuardado = padreRepository.save(padre);
+        
+        // Registrar auditoría
+        auditoriaService.registrarAccion(accion, padreGuardado, padreAnterior);
+        
+        return padreGuardado;
     }
 
     @Transactional
     public void deleteById(Long id) {
-        padreRepository.deleteById(id);
+        Optional<Padre> padreOpt = padreRepository.findById(id);
+        if (padreOpt.isPresent()) {
+            Padre padre = padreOpt.get();
+            padreRepository.deleteById(id);
+            
+            auditoriaService.registrarAccion("ELIMINAR", padre, padre);
+        }
     }
 
     @Transactional(readOnly = true)
