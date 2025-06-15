@@ -221,13 +221,13 @@
                                         <td colspan="7" class="text-center">No hay registros de auditoría</td>
                                     </tr>
                                     <tr th:each="registro : ${paginaAuditoria.content}"
-                                        th:class="${registro.accion == 'ELIMINAR'} ? 'table-danger' : (${registro.accion == 'CREAR'} ? 'table-success' : '')">
+                                        th:class="${registro.accion == 'ELIMINAR' or registro.accion == 'DESACTIVAR'} ? 'table-danger' : (${registro.accion == 'CREAR' or registro.accion == 'ACTIVAR'}  ? 'table-success' : '')">
                                         <td th:text="${#temporals.format(registro.fechaHora, 'dd/MM/yyyy HH:mm:ss')}">
                                         </td>
                                         <td th:text="${registro.usuario.username}"></td>
                                         <td>
                                             <span
-                                                th:class="${registro.accion == 'CREAR'} ? 'badge bg-success' : (${registro.accion == 'ACTUALIZAR'} ? 'badge bg-warning' : 'badge bg-danger')"
+                                                th:class="${registro.accion == 'CREAR' or registro.accion == 'ACTIVAR'} ? 'badge bg-success' : (${registro.accion == 'ACTUALIZAR'} ? 'badge bg-warning' : 'badge bg-danger')"
                                                 th:text="${registro.accion}"></span>
                                         </td>
                                         <td th:text="${registro.entidad}"></td>

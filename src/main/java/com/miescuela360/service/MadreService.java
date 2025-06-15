@@ -1,6 +1,7 @@
 package com.miescuela360.service;
 
 import com.miescuela360.model.Madre;
+import com.miescuela360.model.Padre;
 import com.miescuela360.repository.MadreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,9 @@ public class MadreService {
 
     @Autowired
     private MadreRepository madreRepository;
+
+    @Autowired
+    private AuditoriaService auditoriaService;
 
     @Transactional(readOnly = true)
     public List<Madre> findAll() {
@@ -32,12 +36,31 @@ public class MadreService {
 
     @Transactional
     public Madre save(Madre madre) {
-        return madreRepository.save(madre);
+        Madre madreAnterior = null;
+        String accion = "CREAR";
+        
+        if (madre.getId() != null) {
+            madreAnterior = madreRepository.findById(madre.getId()).orElse(null);
+            accion = "ACTUALIZAR";
+        }
+        
+        Madre madreGuardado = madreRepository.save(madre);
+        
+        // Registrar auditoría
+        auditoriaService.registrarAccion(accion, madreGuardado, madreAnterior);
+        
+        return madreGuardado;
     }
 
     @Transactional
     public void deleteById(Long id) {
-        madreRepository.deleteById(id);
+        Optional<Madre> madreOpt = madreRepository.findById(id);
+        if (madreOpt.isPresent()) {
+            Madre madre = madreOpt.get();
+            madreRepository.deleteById(id);
+            
+            auditoriaService.registrarAccion("ELIMINAR", madre, madre);
+        }
     }
 
     @Transactional(readOnly = true)

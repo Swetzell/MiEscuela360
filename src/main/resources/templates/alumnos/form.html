@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${alumno.id == null ? 'Nuevo Alumno' : 'Editar Alumno'} + ' - MiEscuela360'"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #2c3e50 0%, #3498db 100%);
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, .8) !important;
+            padding: 1rem;
+            margin: 0.2rem 0;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #fff !important;
+            background: rgba(255, 255, 255, .1);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, .2);
+            color: #fff !important;
+        }
+
+        .nav-link i {
+            width: 25px;
+        }
+
+        .form-card {
+            border-left: 4px solid #3498db;
+        }
+
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #2c3e50 0%, #3498db 100%);
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, .8) !important;
+            padding: 1rem;
+            margin: 0.2rem 0;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #fff !important;
+            background: rgba(255, 255, 255, .1);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, .2);
+            color: #fff !important;
+        }
+
+        .nav-link i {
+            width: 25px;
+        }
+
+        .sidebar-heading {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .main-content {
+            padding: 20px;
+        }
+
+        .card-header {
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block sidebar">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h4 class="text-white">MiEscuela360</h4>
+                        <p class="text-white-50">Sistema de Gestión Educativa</p>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link " href="/">
+                                <i class="fas fa-home"></i> Inicio
+                            </a>
+                        </li>
+                        <!-- Sección de Gestión Académica -->
+                        <li class="nav-item">
+                            <h6
+                                class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white-50">
+                                <span>Gestión Académica</span>
+                            </h6>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/alumnos">
+                                <i class="fas fa-user-graduate"></i> Alumnos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/grados">
+                                <i class="fas fa-school"></i> Grados
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/secciones">
+                                <i class="fas fa-chalkboard"></i> Secciones
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/asistencias">
+                                <i class="fas fa-clipboard-check"></i> Asistencias
+                            </a>
+                        </li>
+
+                        <!-- Sección de Gestión de Familia -->
+                        <li class="nav-item">
+                            <h6
+                                class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white-50">
+                                <span>Gestión de Familia</span>
+                            </h6>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/padres">
+                                <i class="fas fa-male"></i> Padres
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/madres">
+                                <i class="fas fa-female"></i> Madres
+                            </a>
+                        </li>
+
+                        <!-- Sección de Gestión Administrativa -->
+                        <li class="nav-item">
+                            <h6
+                                class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white-50">
+                                <span>Gestión Administrativa</span>
+                            </h6>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/pagos">
+                                <i class="fas fa-money-bill-wave"></i> Pagos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/reportes">
+                                <i class="fas fa-chart-bar"></i> Reportes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="/usuarios">
+                                <i class="fas fa-users"></i> Usuarios
+                            </a>
+                        </li>
+
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-danger" href="/logout">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                    <h1 class="h2">
+                        <i class="fas fa-user-graduate text-primary me-2"></i>
+                        <span th:text="${alumno.id == null ? 'Nuevo Alumno' : 'Editar Alumno'}"></span>
+                    </h1>
+                    <div>
+                        <a th:href="@{/alumnos}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Mensajes de error -->
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <!-- Formulario -->
+                <div class="card shadow-sm form-card">
+                    <div class="card-body">
+                        <form th:action="@{/alumnos/guardar}" th:object="${alumno}" method="post">
+                            <input type="hidden" th:field="*{id}" />
+
+                            <div class="row">
+                                <!-- Datos Personales -->
+                                <div class="col-md-6">
+                                    <h5 class="mb-3">
+                                        <i class="fas fa-user text-primary me-2"></i>
+                                        Datos Personales
+                                    </h5>
+
+                                    <div class="mb-3">
+                                        <label for="nombre" class="form-label">Nombre</label>
+                                        <input type="text" class="form-control" id="nombre" th:field="*{nombre}"
+                                            required pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$"
+                                            title="Solo se permiten letras y espacios">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="apellido" class="form-label">Apellido</label>
+                                        <input type="text" class="form-control" id="apellido" th:field="*{apellido}"
+                                            required pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$"
+                                            title="Solo se permiten letras y espacios">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="dni" class="form-label">DNI</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="dni" th:field="*{dni}" required
+                                                pattern="^\d{8}$" title="El DNI debe tener exactamente 8 dígitos">
+                                            <button class="btn btn-primary" type="button"
+                                                id="validarDniBtn">Validar</button>
+                                        </div>
+                                        <div class="invalid-feedback" id="dni-invalid-feedback">
+                                            El DNI debe tener exactamente 8 dígitos.
+                                        </div>
+                                        <div class="valid-feedback" id="dni-valid-feedback" style="display: none;">
+                                        </div>
+                                        <div class="text-danger" id="dni-error" style="display: none;"></div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" th:field="*{email}"
+                                            required>
+                                        <div class="invalid-feedback">
+                                            El email es obligatorio y debe tener un formato válido.
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="fechaNacimiento" class="form-label">Fecha de Nacimiento</label>
+                                        <input type="date" class="form-control" id="fechaNacimiento"
+                                            th:field="*{fechaNacimiento}" required
+                                            max="{{#dates.format(#dates.createNow().minusYears(6), 'yyyy-MM-dd')}}"
+                                            title="La fecha de nacimiento debe ser al menos 6 años antes de la fecha actual">
+                                        <div class="invalid-feedback">
+                                            La fecha de nacimiento debe ser al menos 6 años antes de la fecha actual.
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="direccion" class="form-label">Dirección</label>
+                                        <input type="text" class="form-control" id="direccion" th:field="*{direccion}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="telefono" class="form-label">Teléfono</label>
+                                        <input type="text" class="form-control" id="telefono" th:field="*{telefono}"
+                                            required>
+                                        <div class="invalid-feedback">
+                                            El teléfono es obligatorio.
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="telefonoEmergencia" class="form-label">Teléfono de
+                                            Emergencia</label>
+                                        <input type="text" class="form-control" id="telefonoEmergencia"
+                                            th:field="*{telefonoEmergencia}" required>
+                                        <div class="invalid-feedback">
+                                            El teléfono de emergencia es obligatorio.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Datos Académicos -->
+                                <div class="col-md-6">
+                                    <h5 class="mb-3">
+                                        <i class="fas fa-graduation-cap text-success me-2"></i>
+                                        Datos Académicos
+                                    </h5>
+                                    <div class="mb-3">
+                                        <label for="grado" class="form-label">Grado</label>
+                                        <select class="form-select" id="grado" th:field="*{grado}" required>
+                                            <option value="">Seleccione un grado</option>
+                                            <option th:each="grado : ${grados}" th:value="${grado.id}"
+                                                th:text="${grado.nombre + ' - ' + grado.descripcion}"
+                                                th:disabled="${!grado.activo}">
+                                            </option>
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            El grado es obligatorio.
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="seccion" class="form-label">Sección</label>
+                                        <select class="form-select" id="seccion" th:field="*{seccion}" required>
+                                            <option value="">Seleccione una sección</option>
+                                            <option th:each="seccion : ${secciones}" th:value="${seccion.id}"
+                                                th:text="${seccion.nombre + ' - ' + seccion.descripcion}"
+                                                th:disabled="${!seccion.activo}">
+                                            </option>
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            La sección es obligatoria.
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="padre" class="form-label">Padre y/o Apoderado</label>
+                                        <select class="form-select" id="padre" th:field="*{padre}">
+                                            <option value="">Seleccione un padre o apoderado</option>
+                                            <option th:each="padre : ${padres}" th:value="${padre.id}"
+                                                th:text="${padre.nombre + ' ' + padre.apellido}">
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="madre" class="form-label">Madre y/o Apoderada</label>
+                                        <select class="form-select" id="madre" th:field="*{madre}">
+                                            <option value="">Seleccione una madre o apoderada</option>
+                                            <option th:each="madre : ${madres}" th:value="${madre.id}"
+                                                th:text="${madre.nombre + ' ' + madre.apellido}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="estadoAcademico" class="form-label">Estado Académico</label>
+                                        <select class="form-select" id="estadoAcademico" th:field="*{estadoAcademico}"
+                                            required>
+                                            <option value="">Seleccione un estado</option>
+                                            <option value="ACTIVO">Activo</option>
+                                            <option value="SUSPENDIDO">Suspendido</option>
+                                            <option value="RETIRADO">Retirado</option>
+                                            <option value="GRADUADO">Graduado</option>
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            El estado académico es obligatorio.
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="fechaInscripcion" class="form-label">Fecha de Inscripción</label>
+                                        <input type="date" class="form-control" id="fechaInscripcion"
+                                            th:field="*{fechaInscripcion}"
+                                            th:value="${alumno.fechaInscripcion != null ? alumno.fechaInscripcion : #dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
+                                            required max="{{#dates.format(#dates.createNow(), 'yyyy-MM-dd')}}"
+                                            title="La fecha de inscripción no puede ser futura">
+                                        <div class="invalid-feedback">
+                                            La fecha de inscripción no puede ser futura.
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="montoMensual" class="form-label">Monto Mensual</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">S/</span>
+                                            <input type="number" step="0.01" class="form-control" id="montoMensual"
+                                                th:field="*{montoMensual}" required>
+                                            <div class="invalid-feedback">
+                                                El monto mensual es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="ultimoPago" class="form-label">Último Pago</label>
+                                        <input type="date" class="form-control" id="ultimoPago"
+                                            th:field="*{ultimoPago}">
+                                        <div class="form-text">Opcional: Fecha del último pago realizado</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="activo"
+                                                th:field="*{activo}">
+                                            <label class="form-check-label" for="activo">
+                                                Alumno Activo
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-end mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>
+                                    <span th:text="${alumno.id == null ? 'Guardar' : 'Actualizar'}"></span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Validación del formulario
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form');
+
+            form.addEventListener('submit', function (event) {
+                // Habilitar validación de bootstrap para todos los campos
+                form.classList.add('was-validated');
+
+                // Validación manual de campos
+                const requiredFields = form.querySelectorAll('[required]');
+                let hasErrors = false;
+                let errorMessage = '';
+
+                requiredFields.forEach(function (field) {
+                    if (!field.value) {
+                        hasErrors = true;
+                        errorMessage += `El campo "${field.previousElementSibling.textContent}" es obligatorio.\n`;
+                        field.classList.add('is-invalid');
+                    }
+                });
+
+                // Validación específica de email
+                const emailField = document.getElementById('email');
+                if (emailField.value && !emailField.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+                    hasErrors = true;
+                    errorMessage += 'El formato del email no es válido.\n';
+                    emailField.classList.add('is-invalid');
+                }
+
+                // Mostrar mensajes de error
+                if (hasErrors) {
+                    event.preventDefault();
+                    alert('Por favor, corrija los siguientes errores:\n' + errorMessage);
+                }
+            });
+
+            // Validación de DNI con la API
+            document.getElementById('validarDniBtn').addEventListener('click', function () {
+                const dniInput = document.getElementById('dni');
+                const dni = dniInput.value.trim();
+                const nombreInput = document.getElementById('nombre');
+                const apellidoInput = document.getElementById('apellido');
+                const validFeedback = document.getElementById('dni-valid-feedback');
+                const invalidFeedback = document.getElementById('dni-invalid-feedback');
+                const dniError = document.getElementById('dni-error');
+
+                // Reset previous feedback
+                validFeedback.style.display = 'none';
+                invalidFeedback.style.display = 'none';
+                dniError.style.display = 'none';
+
+                if (!dni || dni.length !== 8 || !/^\d+$/.test(dni)) {
+                    dniError.textContent = 'El DNI debe tener exactamente 8 dígitos numéricos.';
+                    dniError.style.display = 'block';
+                    return;
+                }
+
+                // Show loading indicator
+                validFeedback.textContent = 'Validando DNI...';
+                validFeedback.style.display = 'block';
+
+                // Call our API endpoint
+                console.log('Enviando solicitud para validar DNI:', dni);
+
+                fetch('/alumnos/validar-dni?dni=' + dni, {
+                    method: 'POST'
+                })
+                    .then(response => {
+                        console.log('Respuesta HTTP:', response.status, response.statusText);
+                        if (!response.ok) {
+                            throw new Error(`Error de servidor: ${response.status} ${response.statusText}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Datos recibidos:', data);
+
+                        if (data.success) {
+                            validFeedback.textContent = 'DNI válido: ' + data.nombre;
+                            validFeedback.style.display = 'block';
+                            dniInput.classList.add('is-valid');
+                            dniInput.classList.remove('is-invalid');
+                            dniError.style.display = 'none';
+
+                            // Si los campos nombre y apellido están vacíos, autocompletarlos
+                            if (!nombreInput.value && !apellidoInput.value && data.nombre) {
+                                // Dividir el nombre completo (asume formato: APELLIDOS NOMBRES)
+                                const nombreCompleto = data.nombre.split(' ');
+                                if (nombreCompleto.length >= 3) {
+                                    // Los dos primeros segmentos suelen ser los apellidos
+                                    apellidoInput.value = nombreCompleto[0] + ' ' + nombreCompleto[1];
+                                    // El resto son los nombres
+                                    nombreInput.value = nombreCompleto.slice(2).join(' ');
+                                } else if (nombreCompleto.length == 2) {
+                                    apellidoInput.value = nombreCompleto[0];
+                                    nombreInput.value = nombreCompleto[1];
+                                }
+                            }
+                        } else {
+                            let mensajeError = 'No se pudo validar el DNI.';
+                            if (data.nombre && data.nombre.startsWith('Error:')) {
+                                mensajeError += ' ' + data.nombre;
+                            }
+                            console.error('Error de validación:', mensajeError);
+                            dniError.textContent = mensajeError;
+                            dniError.style.display = 'block';
+                            validFeedback.style.display = 'none';
+                            dniInput.classList.add('is-invalid');
+                            dniInput.classList.remove('is-valid');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error en fetch:', error);
+                        dniError.textContent = `Error al validar el DNI: ${error.message}`;
+                        dniError.style.display = 'block';
+                        validFeedback.style.display = 'none';
+                        dniInput.classList.add('is-invalid');
+                        dniInput.classList.remove('is-valid');
+                    });
+            });
+        });
+    </script>
+</body>
+
+</html>
