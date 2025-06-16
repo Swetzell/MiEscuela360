@@ -15,6 +15,9 @@ public class SeccionService {
     @Autowired
     private SeccionRepository seccionRepository;
     
+    @Autowired
+    private AuditoriaService auditoriaService;
+    
     @Transactional(readOnly = true)
     public List<Seccion> findAll() {
         return seccionRepository.findAll();
@@ -37,12 +40,32 @@ public class SeccionService {
     
     @Transactional
     public Seccion save(Seccion seccion) {
-        return seccionRepository.save(seccion);
+        Seccion seccionAnterior = null;
+        String accion = "CREAR";
+        
+        if (seccion.getId() != null) {
+            seccionAnterior = seccionRepository.findById(seccion.getId()).orElse(null);
+            accion = "ACTUALIZAR";
+        }
+        
+        Seccion seccionGuardada = seccionRepository.save(seccion);
+        
+        // Registrar auditoría
+        auditoriaService.registrarAccion(accion, seccionGuardada, seccionAnterior);
+        
+        return seccionGuardada;
     }
     
     @Transactional
     public void delete(Long id) {
-        seccionRepository.deleteById(id);
+        Optional<Seccion> seccionOpt = seccionRepository.findById(id);
+        if (seccionOpt.isPresent()) {
+            Seccion seccion = seccionOpt.get();
+            seccionRepository.deleteById(id);
+            
+            // Registrar auditoría
+            auditoriaService.registrarAccion("ELIMINAR", seccion, seccion);
+        }
     }
     
     @Transactional(readOnly = true)
@@ -58,8 +81,20 @@ public class SeccionService {
         Optional<Seccion> optSeccion = seccionRepository.findById(id);
         if (optSeccion.isPresent()) {
             Seccion seccion = optSeccion.get();
+            
+            // Crear una copia del estado anterior para auditoría
+            Seccion seccionAnterior = new Seccion();
+            seccionAnterior.setId(seccion.getId());
+            seccionAnterior.setNombre(seccion.getNombre());
+            seccionAnterior.setDescripcion(seccion.getDescripcion());
+            seccionAnterior.setActivo(seccion.getActivo()); // Estado anterior
+            
+            // Cambiar el estado
             seccion.setActivo(false);
             seccionRepository.save(seccion);
+            
+            // Registrar auditoría con estado anterior y nuevo
+            auditoriaService.registrarAccion("DESACTIVAR", seccion, seccionAnterior);
         }
     }
 
@@ -71,8 +106,20 @@ public class SeccionService {
         Optional<Seccion> optSeccion = seccionRepository.findById(id);
         if (optSeccion.isPresent()) {
             Seccion seccion = optSeccion.get();
+            
+            // Crear una copia del estado anterior para auditoría
+            Seccion seccionAnterior = new Seccion();
+            seccionAnterior.setId(seccion.getId());
+            seccionAnterior.setNombre(seccion.getNombre());
+            seccionAnterior.setDescripcion(seccion.getDescripcion());
+            seccionAnterior.setActivo(seccion.getActivo()); // Estado anterior
+            
+            // Cambiar el estado
             seccion.setActivo(true);
             seccionRepository.save(seccion);
+            
+            // Registrar auditoría con estado anterior y nuevo
+            auditoriaService.registrarAccion("ACTIVAR", seccion, seccionAnterior);
         }
     }
 
@@ -84,8 +131,23 @@ public class SeccionService {
         Optional<Seccion> optSeccion = seccionRepository.findById(id);
         if (optSeccion.isPresent()) {
             Seccion seccion = optSeccion.get();
+            
+            // Crear una copia del estado anterior para auditoría
+            Seccion seccionAnterior = new Seccion();
+            seccionAnterior.setId(seccion.getId());
+            seccionAnterior.setNombre(seccion.getNombre());
+            seccionAnterior.setDescripcion(seccion.getDescripcion());
+            seccionAnterior.setActivo(seccion.getActivo()); // Estado anterior
+            
+            // Determinar la acción según el estado actual
+            String accion = seccion.getActivo() ? "DESACTIVAR" : "ACTIVAR";
+            
+            // Cambiar el estado
             seccion.setActivo(!seccion.getActivo());
             seccionRepository.save(seccion);
+            
+            // Registrar auditoría
+            auditoriaService.registrarAccion(accion, seccion, seccionAnterior);
         }
     }
     
@@ -99,7 +161,8 @@ public class SeccionService {
         
         for (String nombre : seccionesDefault) {
             if (!existsByNombre(nombre)) {
-                Seccion seccion = new Seccion(nombre);
+                Seccion seccion = new Seccion();
+                seccion.setNombre(nombre);  
                 seccion.setDescripcion("Sección " + nombre);
                 seccion.setActivo(true);
                 save(seccion);
