@@ -19,6 +19,9 @@ public class UsuarioService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private AuditoriaService auditoriaService;
+
     @Transactional(readOnly = true)
     public List<Usuario> findAll() {
         return usuarioRepository.findAll();
@@ -41,15 +44,41 @@ public class UsuarioService {
 
     @Transactional
     public Usuario save(Usuario usuario) {
-        if (usuario.getId() == null) {
+        Usuario usuarioAnterior = null;
+        String accion = "CREAR";
+        
+        if (usuario.getId() != null) {
+            usuarioAnterior = usuarioRepository.findById(usuario.getId()).orElse(null);
+            accion = "ACTUALIZAR";
+            
+            // Si la contraseña no ha cambiado, mantener la existente
+            if (usuario.getPassword() == null || usuario.getPassword().isEmpty()) {
+                usuario.setPassword(usuarioAnterior.getPassword());
+            } else {
+                usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+            }
+        } else {
+            // Es un nuevo usuario
             usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         }
-        return usuarioRepository.save(usuario);
+        
+        Usuario usuarioGuardado = usuarioRepository.save(usuario);
+        
+        // Registrar auditoría
+        auditoriaService.registrarAccion(accion, usuarioGuardado, usuarioAnterior);
+        
+        return usuarioGuardado;
     }
 
     @Transactional
     public void deleteById(Long id) {
-        usuarioRepository.deleteById(id);
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
+        if (usuarioOpt.isPresent()) {
+            Usuario usuario = usuarioOpt.get();
+            usuarioRepository.deleteById(id);
+            
+            auditoriaService.registrarAccion("ELIMINAR", usuario, usuario);
+        }
     }
 
     @Transactional
@@ -65,16 +94,32 @@ public class UsuarioService {
     @Transactional
     public void cambiarPassword(Long id, String nuevaPassword) {
         usuarioRepository.findById(id).ifPresent(usuario -> {
+            Usuario usuarioAnterior = new Usuario();
+            // Clonar solo los datos necesarios para la auditoría
+            usuarioAnterior.setId(usuario.getId());
+            usuarioAnterior.setUsername(usuario.getUsername());
+            usuarioAnterior.setPassword(usuario.getPassword());
+            
             usuario.setPassword(passwordEncoder.encode(nuevaPassword));
             usuarioRepository.save(usuario);
+            
+            auditoriaService.registrarAccion("CAMBIAR_PASSWORD", usuario, usuarioAnterior);
         });
     }
 
     @Transactional
     public void activarDesactivar(Long id) {
         usuarioRepository.findById(id).ifPresent(usuario -> {
+            Usuario usuarioAnterior = new Usuario();
+            // Clonar solo los datos necesarios para la auditoría
+            usuarioAnterior.setId(usuario.getId());
+            usuarioAnterior.setUsername(usuario.getUsername());
+            usuarioAnterior.setActivo(usuario.isActivo());
+            
             usuario.setActivo(!usuario.isActivo());
             usuarioRepository.save(usuario);
+            
+            auditoriaService.registrarAccion("CAMBIAR_ESTADO", usuario, usuarioAnterior);
         });
     }
 } 

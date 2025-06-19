@@ -6,6 +6,7 @@ import com.miescuela360.model.Auditoria;
 import com.miescuela360.model.Usuario;
 import com.miescuela360.repository.AuditoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -19,14 +20,17 @@ import java.time.LocalDateTime;
 @Service
 public class AuditoriaService {
 
+    private final UsuarioService usuarioService;
+    
     @Autowired
     private AuditoriaRepository auditoriaRepository;
     
     @Autowired
-    private UsuarioService usuarioService;
-    
-    @Autowired
     private ObjectMapper objectMapper;
+    
+    public AuditoriaService(@Lazy UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+    }
     
     @Transactional
     public void registrarAccion(String accion, Object entidad, Object datosAnteriores) {
