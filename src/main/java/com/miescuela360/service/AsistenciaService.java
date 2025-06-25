@@ -17,6 +17,9 @@ public class AsistenciaService {
     @Autowired
     private AsistenciaRepository asistenciaRepository;
 
+    @Autowired
+    private AuditoriaService auditoriaService;
+
     @Transactional(readOnly = true)
     public List<Asistencia> findAll() {
         return asistenciaRepository.findAll();
@@ -54,11 +57,24 @@ public class AsistenciaService {
 
     @Transactional
     public Asistencia save(Asistencia asistencia) {
-        return asistenciaRepository.save(asistencia);
+        Asistencia asistenciaAnterior = null;
+        String accion = "CREAR";
+        if (asistencia.getId() != null) {
+            asistenciaAnterior = asistenciaRepository.findById(asistencia.getId()).orElse(null);
+            accion = "ACTUALIZAR";
+        }
+        Asistencia asistenciaGuardada = asistenciaRepository.save(asistencia);
+        auditoriaService.registrarAccion(accion, asistenciaGuardada, asistenciaAnterior);
+        return asistenciaGuardada;
     }
 
     @Transactional
     public void deleteById(Long id) {
-        asistenciaRepository.deleteById(id);
+        Optional<Asistencia> asistenciaOpt = asistenciaRepository.findById(id);
+        if (asistenciaOpt.isPresent()) {
+            Asistencia asistencia = asistenciaOpt.get();
+            asistenciaRepository.deleteById(id);
+            auditoriaService.registrarAccion("ELIMINAR", asistencia, asistencia);
+        }
     }
 }

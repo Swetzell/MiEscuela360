@@ -31,6 +31,7 @@ public class Madre {
     private String ocupacion;
     
     @OneToMany(mappedBy = "madre")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Set<Alumno> hijos = new HashSet<>();
     
     private boolean activo = true;

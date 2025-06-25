@@ -14,6 +14,7 @@ public class Pago {
     
     @ManyToOne
     @JoinColumn(name = "alumno_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore 
     private Alumno alumno;
     
     @Column(nullable = false)

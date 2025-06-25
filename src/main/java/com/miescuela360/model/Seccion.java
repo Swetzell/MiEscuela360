@@ -25,6 +25,7 @@ public class Seccion {
     private Grado grado;
     
     @OneToMany(mappedBy = "seccion")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<Alumno> alumnos;
     
     public Seccion() {

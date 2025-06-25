@@ -36,11 +36,12 @@ public class AuditoriaService {
     public void registrarAccion(String accion, Object entidad, Object datosAnteriores) {
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            
+            System.out.println("Auth: " + auth);
             if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
                 String username = auth.getName();
+                System.out.println("Usuario autenticado: " + username);
                 Usuario usuario = usuarioService.findByUsername(username).orElse(null);
-                
+                System.out.println("Usuario encontrado: " + usuario);
                 if (usuario != null) {
                     String ip = obtenerIPCliente();
                     

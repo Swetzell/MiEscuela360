@@ -212,7 +212,7 @@
                                         <th>Acción</th>
                                         <th>Entidad</th>
                                         <th>ID Entidad</th>
-                                        <th>IP</th>
+
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -232,12 +232,12 @@
                                         </td>
                                         <td th:text="${registro.entidad}"></td>
                                         <td th:text="${registro.entidadId}"></td>
-                                        <td th:text="${registro.ip}"></td>
+
                                         <td>
                                             <button type="button" class="btn btn-sm btn-outline-primary btn-view"
                                                 data-bs-toggle="modal" data-bs-target="#detalleModal"
-                                                th:data-antes="${registro.datosAnteriores}"
-                                                th:data-despues="${registro.datosNuevos}">
+                                                th:attr="data-antes=${registro.datosAnteriores != null ? #strings.escapeJavaScript(registro.datosAnteriores) : '{}'}"
+                                                th:attrappend="data-despues=${registro.datosNuevos != null ? #strings.escapeJavaScript(registro.datosNuevos) : '{}'}">
                                                 <i class="fas fa-eye"></i> Ver detalles
                                             </button>
                                         </td>
@@ -352,19 +352,22 @@
                 // Reset diff view
                 diffContainerVisible = false;
                 $('#diffContainer').hide();
+                $('#diferencias').empty();
                 $('#showDiffBtn').html('<i class="fas fa-exchange-alt me-1"></i> Mostrar diferencias');
             });
 
             $('#showDiffBtn').on('click', function () {
                 if (!diffContainerVisible) {
                     try {
-                        var delta = jsondiffpatch.diff(
-                            JSON.parse(antes || '{}'),
-                            JSON.parse(despues || '{}')
-                        );
+                        var objAntes = {};
+                        var objDespues = {};
+                        try { objAntes = JSON.parse(antes || '{}'); } catch (e) { }
+                        try { objDespues = JSON.parse(despues || '{}'); } catch (e) { }
+
+                        var delta = jsondiffpatch.diff(objAntes, objDespues);
 
                         if (delta) {
-                            var diffHtml = jsondiffpatch.formatters.html.format(delta, antes);
+                            var diffHtml = jsondiffpatch.formatters.html.format(delta, objAntes);
                             $('#diferencias').html(diffHtml);
                         } else {
                             $('#diferencias').html('<div class="alert alert-info mb-0">No hay diferencias</div>');

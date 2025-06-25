@@ -15,6 +15,9 @@ public class AlumnoService {
     @Autowired
     private AlumnoRepository alumnoRepository;
 
+    @Autowired
+    private AuditoriaService auditoriaService;
+
     @Transactional(readOnly = true)
     public List<Alumno> findAll() {
         return alumnoRepository.findAll();
@@ -31,13 +34,28 @@ public class AlumnoService {
     }
 
     @Transactional
-    public Alumno save(Alumno alumno) {
-        return alumnoRepository.save(alumno);
+public Alumno save(Alumno alumno) {
+    Alumno alumnoAnterior = null;
+    String accion = "CREAR";
+    if (alumno.getId() != null) {
+        alumnoAnterior = alumnoRepository.findById(alumno.getId()).orElse(null);
+        accion = "ACTUALIZAR";
     }
+    Alumno alumnoGuardado = alumnoRepository.save(alumno);
+    System.out.println("Antes de registrar auditoría para Alumno: " + alumnoGuardado.getId());
+    auditoriaService.registrarAccion(accion, alumnoGuardado, alumnoAnterior);
+    System.out.println("Después de registrar auditoría para Alumno");
+    return alumnoGuardado;
+}
 
     @Transactional
     public void deleteById(Long id) {
-        alumnoRepository.deleteById(id);
+        Optional<Alumno> alumnoOpt = alumnoRepository.findById(id);
+        if (alumnoOpt.isPresent()) {
+            Alumno alumno = alumnoOpt.get();
+            alumnoRepository.deleteById(id);
+            auditoriaService.registrarAccion("ELIMINAR", alumno, alumno);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -111,4 +129,4 @@ public class AlumnoService {
     public List<Alumno> findByActivo(Boolean activo) {
         return alumnoRepository.findByActivo(activo);
     }
-} 
+}

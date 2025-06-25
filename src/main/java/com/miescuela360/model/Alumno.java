@@ -68,9 +68,11 @@ public class Alumno {
     private LocalDate fechaInscripcion;
     
     @OneToMany(mappedBy = "alumno", cascade = CascadeType.ALL)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Set<Asistencia> asistencias = new HashSet<>();
     
     @OneToMany(mappedBy = "alumno", cascade = CascadeType.ALL)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Set<Pago> pagos = new HashSet<>();
     
     @Column(name = "monto_mensual")

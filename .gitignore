@@ -32,3 +32,12 @@ build/
 ### VS Code ###
 .vscode/
 "git" 
+
+target/
+build/
+*.log
+*.zip
+*.rar
+*.exe
+*.dll
+*.class
