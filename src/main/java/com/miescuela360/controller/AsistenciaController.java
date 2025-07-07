@@ -8,6 +8,7 @@ import com.miescuela360.service.AsistenciaService;
 import com.miescuela360.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/asistencias")
+@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MAESTRA')")
 public class AsistenciaController {
 
     @Autowired

@@ -18,6 +18,12 @@ public class Rol {
     @Column(length = 1000)
     private String descripcion;
     
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "rol_permisos", joinColumns = @JoinColumn(name = "rol_id"))
+    @Column(name = "permiso")
+    @Enumerated(EnumType.STRING)
+    private Set<Permiso> permisos = new HashSet<>();
+    
     @ManyToMany(mappedBy = "roles")
     private Set<Usuario> usuarios = new HashSet<>();
     
@@ -29,7 +35,16 @@ public class Rol {
     )
     private Set<Servicio> servicios = new HashSet<>();
     
-    // Getters y Setters
+    // Constructor por defecto
+    public Rol() {
+    }
+    
+    // Constructor con nombre
+    public Rol(String nombre) {
+        this.nombre = nombre;
+    }
+    
+    // Getters y Setters existentes
     public Long getId() {
         return id;
     }
@@ -69,4 +84,25 @@ public class Rol {
     public void setServicios(Set<Servicio> servicios) {
         this.servicios = servicios;
     }
-} 
+    
+    // Nuevos métodos para manejar permisos
+    public Set<Permiso> getPermisos() {
+        return permisos;
+    }
+    
+    public void setPermisos(Set<Permiso> permisos) {
+        this.permisos = permisos;
+    }
+    
+    public void agregarPermiso(Permiso permiso) {
+        permisos.add(permiso);
+    }
+    
+    public void eliminarPermiso(Permiso permiso) {
+        permisos.remove(permiso);
+    }
+    
+    public boolean tienePermiso(Permiso permiso) {
+        return permisos.contains(permiso);
+    }
+}

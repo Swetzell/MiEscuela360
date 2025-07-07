@@ -1,0 +1,12 @@
+package com.miescuela360.model;
+
+public enum Permiso {
+    ACCESO_ASISTENCIAS,
+    ACCESO_ALUMNOS,
+    ACCESO_GRADOS,
+    ACCESO_SECCIONES,
+    ACCESO_USUARIOS,
+    ACCESO_ROLES,
+    ACCESO_SERVICIOS,
+    ACCESO_CONFIGURACION,
+}

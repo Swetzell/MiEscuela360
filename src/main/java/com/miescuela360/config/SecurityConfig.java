@@ -1,11 +1,8 @@
 package com.miescuela360.config;
 
-import com.miescuela360.service.AutenticacionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -13,17 +10,28 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
-
-    @Autowired
-    private AutenticacionService autenticacionService;    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                .requestMatchers("/login").permitAll()
-                .requestMatchers("/public-api-test/**").permitAll() // Permitir acceso a endpoints de diagnóstico público
-                .requestMatchers("/api/diagnose/**").hasRole("ADMIN") // Solo admins pueden acceder a los diagnósticos de API
+            .authorizeHttpRequests(authorize -> authorize
+                // Rutas públicas
+                .requestMatchers("/", "/login", "/public/**", "/css/**", "/js/**", "/images/**").permitAll()
+                
+                // Rutas específicas por rol
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/asistencias/**").hasAnyRole("ADMIN", "MAESTRA")
+                .requestMatchers("/alumnos/**").hasAnyRole("ADMIN", "MAESTRA")
+                .requestMatchers("/grados/**").hasAnyRole("ADMIN", "MAESTRA")
+                .requestMatchers("/secciones/**").hasAnyRole("ADMIN", "MAESTRA")
+                .requestMatchers("/usuarios/**").hasRole("ADMIN")
+                .requestMatchers("/roles/**").hasRole("ADMIN")
+                .requestMatchers("/auditoria/**").hasRole("ADMIN")
+                .requestMatchers("/pagos/**").hasRole("ADMIN")
+                .requestMatchers("/reportes/**").hasRole("ADMIN")
+                // Todo lo demás requiere autenticación
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -32,19 +40,14 @@ public class SecurityConfig {
                 .permitAll()
             )
             .logout(logout -> logout
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/login?logout")
-                .invalidateHttpSession(true)
-                .clearAuthentication(true)
-                .deleteCookies("JSESSIONID")
+                // Configura el matcher para permitir GET en /logout
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
+                .logoutSuccessUrl("/login?logout")   
+                .invalidateHttpSession(true)         
+                .deleteCookies("JSESSIONID")         
                 .permitAll()
             );
-
+        
         return http.build();
     }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
-    }
-} 
+}
