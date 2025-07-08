@@ -203,21 +203,53 @@
                 <input type="hidden" th:field="*{id}">
 
                 <div class="mb-3">
-                  <label for="nombre" class="form-label">Nombre</label>
-                  <input type="text" class="form-control" id="nombre" th:field="*{nombre}" required>
+                  <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <input type="text" class="form-control" id="nombre" th:field="*{nombre}" required minlength="1"
+                      maxlength="50" placeholder="Ej: 1º, 2º, Primero A, etc.">
+                    <button class="btn btn-outline-secondary" type="button" id="btnInsertarSimboloGrado"
+                      title="Insertar símbolo º">
+                      º
+                    </button>
+                  </div>
                   <div class="invalid-feedback">
-                    Por favor ingrese el nombre del grado.
+                    Por favor ingrese un nombre de grado válido.
+                  </div>
+                  <div class="form-text text-muted">El nombre del grado debe ser único y descriptivo (ej: 1º, 2º, etc.).
+                  </div>
+
+                  <!-- Botones de acceso rápido para grados comunes -->
+                  <div class="mt-2">
+                    <small class="text-muted me-2">Grados comunes:</small>
+                    <button type="button" class="btn btn-sm btn-outline-secondary me-1 btn-grado"
+                      data-grado="1º">1º</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary me-1 btn-grado"
+                      data-grado="2º">2º</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary me-1 btn-grado"
+                      data-grado="3º">3º</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary me-1 btn-grado"
+                      data-grado="4º">4º</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary me-1 btn-grado"
+                      data-grado="5º">5º</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary me-1 btn-grado"
+                      data-grado="6º">6º</button>
                   </div>
                 </div>
 
                 <div class="mb-3">
                   <label for="descripcion" class="form-label">Descripción</label>
-                  <textarea class="form-control" id="descripcion" th:field="*{descripcion}" rows="3"></textarea>
+                  <textarea class="form-control" id="descripcion" th:field="*{descripcion}" rows="3" maxlength="1000"
+                    placeholder="Describe el grado brevemente..."></textarea>
+                  <div class="form-text text-muted">
+                    <span id="descripcionCounter">0</span>/1000 caracteres
+                  </div>
                 </div>
 
                 <div class="mb-4 form-check form-switch">
                   <input class="form-check-input" type="checkbox" role="switch" id="activo" th:field="*{activo}">
                   <label class="form-check-label" for="activo">Activo</label>
+                  <div class="form-text text-muted">Los grados inactivos no estarán disponibles para asignar alumnos.
+                  </div>
                 </div>
 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -238,26 +270,158 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Script para validación de formulario
+    // Script mejorado para validación de formulario
     (function () {
       'use strict'
 
-      // Obtener todos los formularios que necesitan validación
-      var forms = document.querySelectorAll('.needs-validation')
+      // Validaciones personalizadas
+      function validarNombreGrado(input) {
+        // Verificar si está vacío
+        if (!input.value.trim()) {
+          input.setCustomValidity('El nombre del grado es obligatorio');
+          return;
+        }
 
-      // Bucle sobre ellos y evitar el envío
-      Array.prototype.slice.call(forms)
-        .forEach(function (form) {
-          form.addEventListener('submit', function (event) {
-            if (!form.checkValidity()) {
-              event.preventDefault()
-              event.stopPropagation()
+        // Verificar longitud mínima
+        if (input.value.trim().length < 1) {
+          input.setCustomValidity('El nombre debe tener al menos 1 carácter');
+          return;
+        }
+
+        // Verificar formato: permitir números, letras, º, °, espacios y algunos símbolos
+        // Esta expresión regular permite formatos como "1º", "2°", "Primero A", etc.
+        const pattern = /^[A-Za-zÀ-ÖØ-öø-ÿ0-9º°\s.()-]+$/;
+        if (!pattern.test(input.value)) {
+          input.setCustomValidity('El nombre contiene caracteres no permitidos. Use letras, números, º, espacios, puntos, guiones y paréntesis');
+          return;
+        }
+
+        // Si pasó todas las validaciones
+        input.setCustomValidity('');
+      }
+
+      // Obtener el campo de nombre para validaciones específicas
+      const nombreInput = document.getElementById('nombre');
+      if (nombreInput) {
+        nombreInput.addEventListener('input', function () {
+          validarNombreGrado(this);
+        });
+        nombreInput.addEventListener('blur', function () {
+          validarNombreGrado(this);
+        });
+      }
+
+      // Validación de descripción (opcional pero con restricciones si se completa)
+      const descripcionInput = document.getElementById('descripcion');
+      if (descripcionInput) {
+        descripcionInput.addEventListener('input', function () {
+          if (this.value.trim().length > 1000) {
+            this.setCustomValidity('La descripción no puede exceder los 1000 caracteres');
+          } else {
+            this.setCustomValidity('');
+          }
+        });
+      }
+
+      // Validación del formulario completo
+      const forms = document.querySelectorAll('.needs-validation');
+      Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          // Validar campos individualmente antes de enviar
+          if (nombreInput) validarNombreGrado(nombreInput);
+
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            // Mostrar el primer error encontrado
+            const invalidInputs = form.querySelectorAll(':invalid');
+            if (invalidInputs.length > 0) {
+              invalidInputs[0].focus();
             }
+          }
 
-            form.classList.add('was-validated')
-          }, false)
-        })
-    })()
+          form.classList.add('was-validated');
+        }, false);
+      });
+    })();
+  </script>
+  <script>
+    // Contador de caracteres para el campo de descripción
+    document.addEventListener('DOMContentLoaded', function () {
+      const descripcionTextarea = document.getElementById('descripcion');
+      const counter = document.getElementById('descripcionCounter');
+
+      if (descripcionTextarea && counter) {
+        // Actualizar contador al cargar
+        counter.textContent = descripcionTextarea.value.length;
+
+        // Actualizar contador al escribir
+        descripcionTextarea.addEventListener('input', function () {
+          counter.textContent = this.value.length;
+
+          // Cambiar color cuando se acerca al límite
+          if (this.value.length > 900) {
+            counter.classList.add('text-danger');
+          } else {
+            counter.classList.remove('text-danger');
+          }
+        });
+      }
+
+      // Función para insertar el símbolo de grado (º)
+      const nombreInput = document.getElementById('nombre');
+      const btnInsertarSimbolo = document.getElementById('btnInsertarSimboloGrado');
+
+      if (btnInsertarSimbolo && nombreInput) {
+        btnInsertarSimbolo.addEventListener('click', function () {
+          // Obtener la posición del cursor
+          const posicionCursor = nombreInput.selectionStart;
+          const valorActual = nombreInput.value;
+
+          // Insertar el símbolo en la posición del cursor
+          const nuevoValor = valorActual.substring(0, posicionCursor) + 'º' +
+            valorActual.substring(posicionCursor);
+
+          // Actualizar el valor del campo
+          nombreInput.value = nuevoValor;
+
+          // Mover el cursor después del símbolo insertado
+          nombreInput.setSelectionRange(posicionCursor + 1, posicionCursor + 1);
+
+          // Enfocar nuevamente el campo
+          nombreInput.focus();
+
+          // Disparar evento de validación
+          nombreInput.dispatchEvent(new Event('input'));
+        });
+
+        // Funcionalidad adicional: Convertir números seguidos de "o" o "0" a símbolo de grado
+        nombreInput.addEventListener('input', function (e) {
+          const valorActual = this.value;
+
+          // Si se ingresa un número seguido de "o" o "0", convertirlo a símbolo de grado
+          const nuevoValor = valorActual.replace(/(\d)[o0]$/i, '$1º');
+
+          if (valorActual !== nuevoValor) {
+            this.value = nuevoValor;
+          }
+        });
+      }
+
+      // Manejar botones de grados comunes
+      const botonesGrado = document.querySelectorAll('.btn-grado');
+
+      if (nombreInput && botonesGrado.length > 0) {
+        botonesGrado.forEach(function (boton) {
+          boton.addEventListener('click', function () {
+            nombreInput.value = this.getAttribute('data-grado');
+            nombreInput.focus();
+            nombreInput.dispatchEvent(new Event('input'));
+          });
+        });
+      }
+    });
   </script>
 </body>
 

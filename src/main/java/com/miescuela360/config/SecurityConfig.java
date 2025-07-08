@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .permitAll()
             )
             .logout(logout -> logout
-                // Configura el matcher para permitir GET en /logout
+               
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
                 .logoutSuccessUrl("/login?logout")   
                 .invalidateHttpSession(true)         

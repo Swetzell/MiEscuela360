@@ -205,7 +205,8 @@
                 <!-- Formulario -->
                 <div class="card shadow-sm form-card">
                     <div class="card-body">
-                        <form th:action="@{/padres/guardar}" th:object="${padre}" method="post">
+                        <form th:action="@{/padres/guardar}" th:object="${padre}" method="post" class="needs-validation"
+                            novalidate>
                             <input type="hidden" th:field="*{id}" />
 
                             <div class="row">
@@ -217,27 +218,44 @@
                                     </h5>
 
                                     <div class="mb-3">
-                                        <label for="nombre" class="form-label">Nombre</label>
+                                        <label for="nombre" class="form-label">Nombre <span
+                                                class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="nombre" th:field="*{nombre}"
-                                            required pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$"
-                                            title="Solo se permiten letras y espacios">
+                                            required pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$" minlength="2" maxlength="50"
+                                            placeholder="Ingrese el nombre" title="Solo se permiten letras y espacios">
+                                        <div class="invalid-feedback" id="nombreFeedback">
+                                            Por favor ingrese un nombre válido (solo letras y espacios).
+                                        </div>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="apellido" class="form-label">Apellido</label>
+                                        <label for="apellido" class="form-label">Apellido <span
+                                                class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="apellido" th:field="*{apellido}"
-                                            required pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$"
+                                            required pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$" minlength="2" maxlength="50"
+                                            placeholder="Ingrese el apellido"
                                             title="Solo se permiten letras y espacios">
+                                        <div class="invalid-feedback" id="apellidoFeedback">
+                                            Por favor ingrese un apellido válido (solo letras y espacios).
+                                        </div>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="dni" class="form-label">DNI</label>
-                                        <div class="input-group">
+                                        <label for="dni" class="form-label">DNI <span
+                                                class="text-danger">*</span></label>
+                                        <div class="input-group has-validation">
                                             <input type="text" class="form-control" id="dni" th:field="*{dni}" required
-                                                pattern="^\d{8}$" title="El DNI debe tener exactamente 8 dígitos">
+                                                pattern="^\d{8}$" placeholder="12345678" maxlength="8"
+                                                title="El DNI debe tener exactamente 8 dígitos">
                                             <button class="btn btn-outline-secondary" type="button" id="validarDniBtn">
                                                 <i class="fas fa-check-circle"></i> Validar DNI
                                             </button>
+                                            <div class="invalid-feedback" id="dniFeedback">
+                                                El DNI debe tener exactamente 8 dígitos numéricos.
+                                            </div>
+                                        </div>
+                                        <div class="form-text text-muted">
+                                            Ingrese el DNI sin puntos ni guiones.
                                         </div>
                                         <div id="dniValidationResult" class="mt-2" style="display: none;">
                                             <div class="alert alert-success alert-dismissible fade show mb-0"
@@ -252,22 +270,45 @@
 
                                     <div class="mb-3">
                                         <label for="direccion" class="form-label">Dirección</label>
-                                        <input type="text" class="form-control" id="direccion" th:field="*{direccion}">
+                                        <input type="text" class="form-control" id="direccion" th:field="*{direccion}"
+                                            maxlength="150" placeholder="Ingrese la dirección completa">
+                                        <div class="invalid-feedback">
+                                            La dirección no puede exceder los 150 caracteres.
+                                        </div>
                                     </div>
 
                                     <div class="mb-3">
                                         <label for="telefono" class="form-label">Teléfono</label>
-                                        <input type="text" class="form-control" id="telefono" th:field="*{telefono}">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                            <input type="text" class="form-control" id="telefono" th:field="*{telefono}"
+                                                pattern="^[0-9]{9}$" placeholder="912345678" maxlength="9"
+                                                title="Ingrese un número de teléfono válido de 9 dígitos">
+                                        </div>
+                                        <div class="invalid-feedback" id="telefonoFeedback">
+                                            Ingrese un número de teléfono válido de 9 dígitos.
+                                        </div>
                                     </div>
 
                                     <div class="mb-3">
                                         <label for="email" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="email" th:field="*{email}">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                            <input type="email" class="form-control" id="email" th:field="*{email}"
+                                                placeholder="ejemplo@correo.com" maxlength="100">
+                                        </div>
+                                        <div class="invalid-feedback" id="emailFeedback">
+                                            Ingrese una dirección de correo electrónico válida.
+                                        </div>
                                     </div>
 
                                     <div class="mb-3">
                                         <label for="ocupacion" class="form-label">Ocupación</label>
-                                        <input type="text" class="form-control" id="ocupacion" th:field="*{ocupacion}">
+                                        <input type="text" class="form-control" id="ocupacion" th:field="*{ocupacion}"
+                                            maxlength="100" placeholder="Ej: Ingeniero, Docente, etc.">
+                                        <div class="invalid-feedback">
+                                            La ocupación no puede exceder los 100 caracteres.
+                                        </div>
                                     </div>
 
                                     <div class="mb-3">
@@ -277,6 +318,9 @@
                                             <label class="form-check-label" for="activo">
                                                 Padre Activo
                                             </label>
+                                        </div>
+                                        <div class="form-text text-muted">
+                                            Los padres inactivos no aparecerán en las listas de selección.
                                         </div>
                                     </div>
                                 </div>
@@ -298,55 +342,232 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Validación de DNI
             const validarDniBtn = document.getElementById('validarDniBtn');
             const dniInput = document.getElementById('dni');
             const dniValidationResult = document.getElementById('dniValidationResult');
             const dniValidationMessage = document.getElementById('dniValidationMessage');
 
-            validarDniBtn.addEventListener('click', function () {
-                const dni = dniInput.value.trim();
+            // Validación de formulario
+            const form = document.querySelector('.needs-validation');
+            const nombreInput = document.getElementById('nombre');
+            const apellidoInput = document.getElementById('apellido');
+            const telefonoInput = document.getElementById('telefono');
+            const emailInput = document.getElementById('email');
 
-                // Validate DNI format
-                if (!/^\d{8}$/.test(dni)) {
-                    showValidationResult('Por favor ingrese un DNI válido de 8 dígitos', 'danger');
-                    return;
+            // Función para validar nombre
+            function validarNombre(input) {
+                const value = input.value.trim();
+                const pattern = /^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$/;
+
+                if (!value) {
+                    input.setCustomValidity('El nombre es obligatorio');
+                    return false;
+                } else if (value.length < 2) {
+                    input.setCustomValidity('El nombre debe tener al menos 2 caracteres');
+                    return false;
+                } else if (!pattern.test(value)) {
+                    input.setCustomValidity('Solo se permiten letras y espacios');
+                    return false;
+                } else {
+                    input.setCustomValidity('');
+                    return true;
+                }
+            }
+
+            // Función para validar apellido
+            function validarApellido(input) {
+                const value = input.value.trim();
+                const pattern = /^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$/;
+
+                if (!value) {
+                    input.setCustomValidity('El apellido es obligatorio');
+                    return false;
+                } else if (value.length < 2) {
+                    input.setCustomValidity('El apellido debe tener al menos 2 caracteres');
+                    return false;
+                } else if (!pattern.test(value)) {
+                    input.setCustomValidity('Solo se permiten letras y espacios');
+                    return false;
+                } else {
+                    input.setCustomValidity('');
+                    return true;
+                }
+            }
+
+            // Función para validar DNI
+            function validarDni(input) {
+                const value = input.value.trim();
+                const pattern = /^\d{8}$/;
+
+                if (!value) {
+                    input.setCustomValidity('El DNI es obligatorio');
+                    return false;
+                } else if (!pattern.test(value)) {
+                    input.setCustomValidity('El DNI debe tener exactamente 8 dígitos');
+                    return false;
+                } else {
+                    input.setCustomValidity('');
+                    return true;
+                }
+            }
+
+            // Función para validar teléfono
+            function validarTelefono(input) {
+                if (!input.value.trim()) {
+                    // El teléfono no es obligatorio
+                    input.setCustomValidity('');
+                    return true;
                 }
 
-                // Show loading state
-                const originalBtnText = validarDniBtn.innerHTML;
-                validarDniBtn.disabled = true;
-                validarDniBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Validando...';
+                const pattern = /^[0-9]{9}$/;
+                if (!pattern.test(input.value.trim())) {
+                    input.setCustomValidity('El teléfono debe tener 9 dígitos numéricos');
+                    return false;
+                } else {
+                    input.setCustomValidity('');
+                    return true;
+                }
+            }
 
-                // Make API call
-                fetch(`/api-test/peru/${dni}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success && data.data) {
-                            const nombreCompleto = data.data.nombre_completo || '';
-                            const nombres = data.data.nombres || '';
-                            const apellidoPaterno = data.data.apellido_paterno || '';
-                            const apellidoMaterno = data.data.apellido_materno || '';
+            // Función para validar email
+            function validarEmail(input) {
+                if (!input.value.trim()) {
+                    // El email no es obligatorio
+                    input.setCustomValidity('');
+                    return true;
+                }
 
-                            // Auto-fill the form fields
-                            document.getElementById('nombre').value = nombres;
-                            document.getElementById('apellido').value = `${apellidoPaterno} ${apellidoMaterno}`.trim();
+                const pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                if (!pattern.test(input.value.trim())) {
+                    input.setCustomValidity('Ingrese un correo electrónico válido');
+                    return false;
+                } else {
+                    input.setCustomValidity('');
+                    return true;
+                }
+            }
 
-                            // Show success message
-                            showValidationResult(`DNI válido: ${nombreCompleto}`, 'success');
-                        } else {
-                            showValidationResult('No se pudo validar el DNI. Por favor verifique el número.', 'warning');
+            // Asignar validadores a eventos de input
+            if (nombreInput) {
+                nombreInput.addEventListener('input', () => validarNombre(nombreInput));
+                nombreInput.addEventListener('blur', () => validarNombre(nombreInput));
+            }
+
+            if (apellidoInput) {
+                apellidoInput.addEventListener('input', () => validarApellido(apellidoInput));
+                apellidoInput.addEventListener('blur', () => validarApellido(apellidoInput));
+            }
+
+            if (dniInput) {
+                dniInput.addEventListener('input', () => validarDni(dniInput));
+                dniInput.addEventListener('blur', () => validarDni(dniInput));
+
+                // Solo permitir dígitos en el campo DNI
+                dniInput.addEventListener('keypress', function (e) {
+                    const charCode = e.which ? e.which : e.keyCode;
+                    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                        e.preventDefault();
+                    }
+                });
+            }
+
+            if (telefonoInput) {
+                telefonoInput.addEventListener('input', () => validarTelefono(telefonoInput));
+                telefonoInput.addEventListener('blur', () => validarTelefono(telefonoInput));
+
+                // Solo permitir dígitos en el campo teléfono
+                telefonoInput.addEventListener('keypress', function (e) {
+                    const charCode = e.which ? e.which : e.keyCode;
+                    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                        e.preventDefault();
+                    }
+                });
+            }
+
+            if (emailInput) {
+                emailInput.addEventListener('input', () => validarEmail(emailInput));
+                emailInput.addEventListener('blur', () => validarEmail(emailInput));
+            }
+
+            // Validación al enviar el formulario
+            if (form) {
+                form.addEventListener('submit', function (event) {
+                    let isValid = true;
+
+                    // Validar cada campo importante
+                    if (nombreInput && !validarNombre(nombreInput)) isValid = false;
+                    if (apellidoInput && !validarApellido(apellidoInput)) isValid = false;
+                    if (dniInput && !validarDni(dniInput)) isValid = false;
+                    if (telefonoInput && !validarTelefono(telefonoInput)) isValid = false;
+                    if (emailInput && !validarEmail(emailInput)) isValid = false;
+
+                    if (!isValid) {
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        // Enfocar el primer campo con error
+                        const invalidInputs = form.querySelectorAll(':invalid');
+                        if (invalidInputs.length > 0) {
+                            invalidInputs[0].focus();
                         }
-                    })
-                    .catch(error => {
-                        console.error('Error al validar DNI:', error);
-                        showValidationResult('Error al conectar con el servicio de validación', 'danger');
-                    })
-                    .finally(() => {
-                        // Reset button state
-                        validarDniBtn.disabled = false;
-                        validarDniBtn.innerHTML = originalBtnText;
-                    });
-            });
+                    }
+
+                    form.classList.add('was-validated');
+                });
+            }
+
+            // Validación de DNI con API
+            if (validarDniBtn && dniInput) {
+                validarDniBtn.addEventListener('click', function () {
+                    const dni = dniInput.value.trim();
+
+                    // Validate DNI format
+                    if (!/^\d{8}$/.test(dni)) {
+                        showValidationResult('Por favor ingrese un DNI válido de 8 dígitos', 'danger');
+                        return;
+                    }
+
+                    // Show loading state
+                    const originalBtnText = validarDniBtn.innerHTML;
+                    validarDniBtn.disabled = true;
+                    validarDniBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Validando...';
+
+                    // Make API call
+                    fetch(`/api-test/peru/${dni}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success && data.data) {
+                                const nombreCompleto = data.data.nombre_completo || '';
+                                const nombres = data.data.nombres || '';
+                                const apellidoPaterno = data.data.apellido_paterno || '';
+                                const apellidoMaterno = data.data.apellido_materno || '';
+
+                                // Auto-fill the form fields
+                                document.getElementById('nombre').value = nombres;
+                                document.getElementById('apellido').value = `${apellidoPaterno} ${apellidoMaterno}`.trim();
+
+                                // Disparar eventos para validar los campos rellenados
+                                nombreInput.dispatchEvent(new Event('input'));
+                                apellidoInput.dispatchEvent(new Event('input'));
+
+                                // Show success message
+                                showValidationResult(`DNI válido: ${nombreCompleto}`, 'success');
+                            } else {
+                                showValidationResult('No se pudo validar el DNI. Por favor verifique el número.', 'warning');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error al validar DNI:', error);
+                            showValidationResult('Error al conectar con el servicio de validación', 'danger');
+                        })
+                        .finally(() => {
+                            // Reset button state
+                            validarDniBtn.disabled = false;
+                            validarDniBtn.innerHTML = originalBtnText;
+                        });
+                });
+            }
 
             function showValidationResult(message, type) {
                 const alertDiv = dniValidationResult.querySelector('.alert');

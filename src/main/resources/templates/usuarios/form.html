@@ -38,10 +38,12 @@
         .form-card {
             border-left: 4px solid #3498db;
         }
+
         .sidebar {
             min-height: 100vh;
             background: linear-gradient(180deg, #2c3e50 0%, #3498db 100%);
         }
+
         .nav-link {
             color: rgba(255, 255, 255, .8) !important;
             padding: 1rem;
@@ -49,27 +51,81 @@
             border-radius: 0.5rem;
             transition: all 0.3s;
         }
+
         .nav-link:hover {
             color: #fff !important;
             background: rgba(255, 255, 255, .1);
         }
+
         .nav-link.active {
             background: rgba(255, 255, 255, .2);
             color: #fff !important;
         }
+
         .nav-link i {
             width: 25px;
         }
+
         .sidebar-heading {
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.1em;
         }
+
         .main-content {
             padding: 20px;
         }
+
         .card-header {
             font-weight: 600;
+        }
+
+        /* Estilo para campos requeridos */
+        .required-field::after {
+            content: "*";
+            color: red;
+            margin-left: 4px;
+        }
+
+        /* Mejora visual para campos inválidos y válidos */
+        .was-validated .form-control:invalid:focus,
+        .form-control.is-invalid:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+        }
+
+        .was-validated .form-control:valid:focus,
+        .form-control.is-valid:focus {
+            border-color: #198754;
+            box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+        }
+
+        /* Estilo para el indicador de fortaleza de contraseña */
+        .password-strength-meter {
+            height: 5px;
+            margin-top: 8px;
+            transition: all 0.3s ease;
+            background: #ddd;
+        }
+
+        .strength-weak {
+            width: 25%;
+            background: #dc3545;
+        }
+
+        .strength-medium {
+            width: 50%;
+            background: #ffc107;
+        }
+
+        .strength-strong {
+            width: 75%;
+            background: #0d6efd;
+        }
+
+        .strength-very-strong {
+            width: 100%;
+            background: #198754;
         }
     </style>
 </head>
@@ -77,8 +133,8 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-             <!-- Sidebar -->
-             <div class="col-md-3 col-lg-2 d-md-block sidebar">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block sidebar">
                 <div class="position-sticky pt-3">
                     <div class="text-center mb-4">
                         <h4 class="text-white">MiEscuela360</h4>
@@ -92,7 +148,8 @@
                         </li>
                         <!-- Sección de Gestión Académica -->
                         <li class="nav-item">
-                            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white-50">
+                            <h6
+                                class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white-50">
                                 <span>Gestión Académica</span>
                             </h6>
                         </li>
@@ -119,7 +176,8 @@
 
                         <!-- Sección de Gestión de Familia -->
                         <li class="nav-item">
-                            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white-50">
+                            <h6
+                                class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white-50">
                                 <span>Gestión de Familia</span>
                             </h6>
                         </li>
@@ -136,7 +194,8 @@
 
                         <!-- Sección de Gestión Administrativa -->
                         <li class="nav-item">
-                            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white-50">
+                            <h6
+                                class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white-50">
                                 <span>Gestión Administrativa</span>
                             </h6>
                         </li>
@@ -189,8 +248,14 @@
                 <!-- Formulario -->
                 <div class="card shadow-sm form-card">
                     <div class="card-body">
-                        <form th:action="@{/usuarios/guardar}" th:object="${usuario}" method="post">
+                        <form th:action="@{/usuarios/guardar}" th:object="${usuario}" method="post"
+                            class="needs-validation" novalidate>
                             <input type="hidden" th:field="*{id}" />
+
+                            <div class="alert alert-info mb-4">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Los campos marcados con <span class="text-danger">*</span> son obligatorios.
+                            </div>
 
                             <div class="row">
                                 <!-- Datos Personales -->
@@ -201,27 +266,36 @@
                                     </h5>
 
                                     <div class="mb-3">
-                                        <label for="nombre" class="form-label">Nombre</label>
+                                        <label for="nombre" class="form-label required-field">Nombre</label>
                                         <input type="text" class="form-control" id="nombre" th:field="*{nombre}"
-                                            required
-                                            pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$"
-                                            title="Solo se permiten letras y espacios">
+                                            required pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]{2,50}$"
+                                            title="Solo se permiten letras y espacios (2-50 caracteres)"
+                                            placeholder="Ingrese el nombre del usuario">
+                                        <div class="invalid-feedback">
+                                            El nombre es obligatorio y debe contener solo letras (2-50 caracteres).
+                                        </div>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="apellido" class="form-label">Apellido</label>
+                                        <label for="apellido" class="form-label required-field">Apellido</label>
                                         <input type="text" class="form-control" id="apellido" th:field="*{apellido}"
-                                            required
-                                            pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$"
-                                            title="Solo se permiten letras y espacios">
+                                            required pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]{2,50}$"
+                                            title="Solo se permiten letras y espacios (2-50 caracteres)"
+                                            placeholder="Ingrese el apellido del usuario">
+                                        <div class="invalid-feedback">
+                                            El apellido es obligatorio y debe contener solo letras (2-50 caracteres).
+                                        </div>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="email" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="email" th:field="*{email}"
-                                            required
+                                        <label for="email" class="form-label required-field">Email</label>
+                                        <input type="email" class="form-control" id="email" th:field="*{email}" required
                                             pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-                                            title="Ingrese un correo electrónico válido">
+                                            title="Ingrese un correo electrónico válido"
+                                            placeholder="ejemplo@correo.com">
+                                        <div class="invalid-feedback">
+                                            El email es obligatorio y debe tener un formato válido (ejemplo@correo.com).
+                                        </div>
                                     </div>
                                 </div>
 
@@ -233,34 +307,59 @@
                                     </h5>
 
                                     <div class="mb-3">
-                                        <label for="username" class="form-label">Nombre de Usuario</label>
+                                        <label for="username" class="form-label required-field">Nombre de
+                                            Usuario</label>
                                         <input type="text" class="form-control" id="username" th:field="*{username}"
-                                            required
-                                            pattern="^[A-Za-z0-9_]+$"
-                                            title="Solo se permiten letras, números y guiones bajos">
+                                            required pattern="^[A-Za-z0-9_]{4,20}$"
+                                            title="Solo se permiten letras, números y guiones bajos (4-20 caracteres)"
+                                            placeholder="Ingrese un nombre de usuario único">
+                                        <div class="invalid-feedback">
+                                            El nombre de usuario es obligatorio y debe contener solo letras, números y
+                                            guiones bajos (4-20 caracteres).
+                                        </div>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="password" class="form-label">Contraseña</label>
-                                        <input type="password" class="form-control" id="password" th:field="*{password}"
-                                            th:required="${usuario.id == null}">
-                                        <small class="text-muted" th:if="${usuario.id != null}">Dejar en blanco para
-                                            mantener la contraseña actual</small>
+                                        <label for="password" class="form-label"
+                                            th:classappend="${usuario.id == null} ? 'required-field' : ''">Contraseña</label>
+                                        <div class="input-group has-validation">
+                                            <input type="password" class="form-control" id="password"
+                                                th:field="*{password}" th:required="${usuario.id == null}" minlength="8"
+                                                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$"
+                                                title="La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una minúscula y un número"
+                                                placeholder="Ingrese una contraseña segura">
+                                            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                                <i class="fas fa-eye" id="togglePasswordIcon"></i>
+                                            </button>
+                                            <div class="invalid-feedback">
+                                                La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una
+                                                minúscula y un número.
+                                            </div>
+                                        </div>
+                                        <div class="password-strength-meter mt-1" id="passwordStrength"></div>
+                                        <small class="text-muted" id="passwordHelp" th:if="${usuario.id != null}">Dejar
+                                            en blanco para mantener la contraseña actual</small>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="roles" class="form-label">Roles</label>
-                                        <select class="form-select" id="roles" th:field="*{roles}" multiple required>
+                                        <label for="roles" class="form-label required-field">Roles</label>
+                                        <select class="form-select" id="roles" th:field="*{roles}" multiple required
+                                            size="3">
                                             <option th:each="rol : ${roles}" th:value="${rol.id}"
                                                 th:text="${rol.nombre}">
                                             </option>
                                         </select>
+                                        <div class="invalid-feedback">
+                                            Debe seleccionar al menos un rol.
+                                        </div>
+                                        <div class="form-text">Mantenga presionado Ctrl para seleccionar múltiples
+                                            roles.</div>
                                     </div>
 
                                     <div class="mb-3">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" id="activo"
-                                                th:field="*{activo}">
+                                                th:field="*{activo}" checked>
                                             <label class="form-check-label" for="activo">
                                                 Usuario Activo
                                             </label>
@@ -270,6 +369,10 @@
                             </div>
 
                             <div class="text-end mt-4">
+                                <button type="button" class="btn btn-secondary me-2"
+                                    onclick="window.location.href='/usuarios'">
+                                    <i class="fas fa-times me-2"></i>Cancelar
+                                </button>
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-save me-2"></i>
                                     <span th:text="${usuario.id == null ? 'Guardar' : 'Actualizar'}"></span>
@@ -283,6 +386,178 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Obtener elementos del formulario
+            const form = document.querySelector('form');
+            const nombreInput = document.getElementById('nombre');
+            const apellidoInput = document.getElementById('apellido');
+            const emailInput = document.getElementById('email');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const passwordStrength = document.getElementById('passwordStrength');
+            const rolesSelect = document.getElementById('roles');
+            const togglePasswordBtn = document.getElementById('togglePassword');
+            const togglePasswordIcon = document.getElementById('togglePasswordIcon');
+
+            // Función para validar campos en tiempo real
+            function validarCampo(input) {
+                if (input.validity.valid) {
+                    input.classList.add('is-valid');
+                    input.classList.remove('is-invalid');
+                    return true;
+                } else {
+                    input.classList.remove('is-valid');
+                    input.classList.add('is-invalid');
+                    return false;
+                }
+            }
+
+            // Validación al perder el foco
+            [nombreInput, apellidoInput, emailInput, usernameInput].forEach(input => {
+                input.addEventListener('blur', function () {
+                    validarCampo(this);
+                });
+
+                // También validar durante la entrada para feedback inmediato
+                input.addEventListener('input', function () {
+                    if (this.value.trim() !== '') {
+                        validarCampo(this);
+                    }
+                });
+            });
+
+            // Validación de roles (al menos uno seleccionado)
+            rolesSelect.addEventListener('change', function () {
+                if (this.selectedOptions.length > 0) {
+                    this.classList.add('is-valid');
+                    this.classList.remove('is-invalid');
+                } else {
+                    this.classList.remove('is-valid');
+                    this.classList.add('is-invalid');
+                }
+            });
+
+            // Función para evaluar la fortaleza de la contraseña
+            function evaluarFortalezaPassword(password) {
+                let strength = 0;
+
+                // Longitud
+                if (password.length >= 8) strength += 1;
+                if (password.length >= 12) strength += 1;
+
+                // Complejidad
+                if (/[A-Z]/.test(password)) strength += 1;
+                if (/[a-z]/.test(password)) strength += 1;
+                if (/[0-9]/.test(password)) strength += 1;
+                if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+
+                return strength;
+            }
+
+            // Actualizar indicador de fortaleza de contraseña
+            passwordInput.addEventListener('input', function () {
+                if (this.value === '') {
+                    passwordStrength.className = 'password-strength-meter';
+                    return;
+                }
+
+                const strength = evaluarFortalezaPassword(this.value);
+
+                passwordStrength.className = 'password-strength-meter';
+                if (strength <= 2) {
+                    passwordStrength.classList.add('strength-weak');
+                } else if (strength <= 4) {
+                    passwordStrength.classList.add('strength-medium');
+                } else if (strength <= 5) {
+                    passwordStrength.classList.add('strength-strong');
+                } else {
+                    passwordStrength.classList.add('strength-very-strong');
+                }
+
+                validarCampo(this);
+            });
+
+            // Validación al enviar el formulario
+            form.addEventListener('submit', function (event) {
+                // Prevenir envío inicialmente
+                event.preventDefault();
+
+                // Aplicar validación de Bootstrap
+                form.classList.add('was-validated');
+
+                // Validar todos los campos requeridos
+                const camposInvalidos = [];
+                let formularioValido = true;
+
+                // Validar nombre
+                if (!validarCampo(nombreInput)) {
+                    formularioValido = false;
+                    camposInvalidos.push(nombreInput);
+                }
+
+                // Validar apellido
+                if (!validarCampo(apellidoInput)) {
+                    formularioValido = false;
+                    camposInvalidos.push(apellidoInput);
+                }
+
+                // Validar email
+                if (!validarCampo(emailInput)) {
+                    formularioValido = false;
+                    camposInvalidos.push(emailInput);
+                }
+
+                // Validar nombre de usuario
+                if (!validarCampo(usernameInput)) {
+                    formularioValido = false;
+                    camposInvalidos.push(usernameInput);
+                }
+
+                // Validar contraseña (solo si es obligatoria o si se ingresó algo)
+                if (passwordInput.hasAttribute('required') || passwordInput.value.trim() !== '') {
+                    if (!validarCampo(passwordInput)) {
+                        formularioValido = false;
+                        camposInvalidos.push(passwordInput);
+                    }
+                }
+
+                // Validar roles
+                if (rolesSelect.selectedOptions.length === 0) {
+                    rolesSelect.classList.add('is-invalid');
+                    formularioValido = false;
+                    camposInvalidos.push(rolesSelect);
+                } else {
+                    rolesSelect.classList.remove('is-invalid');
+                    rolesSelect.classList.add('is-valid');
+                }
+
+                // Si el formulario es válido, enviarlo
+                if (formularioValido) {
+                    form.submit();
+                } else {
+                    // Enfocar el primer campo con error
+                    if (camposInvalidos.length > 0) {
+                        camposInvalidos[0].focus();
+                    }
+                }
+            });
+
+            // Toggle para mostrar/ocultar contraseña
+            togglePasswordBtn.addEventListener('click', function () {
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    togglePasswordIcon.classList.remove('fa-eye');
+                    togglePasswordIcon.classList.add('fa-eye-slash');
+                } else {
+                    passwordInput.type = 'password';
+                    togglePasswordIcon.classList.remove('fa-eye-slash');
+                    togglePasswordIcon.classList.add('fa-eye');
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

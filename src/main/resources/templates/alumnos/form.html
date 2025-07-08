@@ -79,6 +79,26 @@
         .card-header {
             font-weight: 600;
         }
+
+        /* Estilo para campos requeridos */
+        .required-field::after {
+            content: "*";
+            color: red;
+            margin-left: 4px;
+        }
+
+        /* Mejora visual para campos inválidos y válidos */
+        .was-validated .form-control:invalid:focus,
+        .form-control.is-invalid:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+        }
+
+        .was-validated .form-control:valid:focus,
+        .form-control.is-valid:focus {
+            border-color: #198754;
+            box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+        }
     </style>
 </head>
 
@@ -201,8 +221,14 @@
                 <!-- Formulario -->
                 <div class="card shadow-sm form-card">
                     <div class="card-body">
-                        <form th:action="@{/alumnos/guardar}" th:object="${alumno}" method="post">
+                        <form th:action="@{/alumnos/guardar}" th:object="${alumno}" method="post"
+                            class="needs-validation" novalidate>
                             <input type="hidden" th:field="*{id}" />
+
+                            <div class="alert alert-info mb-4">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Los campos marcados con <span class="text-danger">*</span> son obligatorios.
+                            </div>
 
                             <div class="row">
                                 <!-- Datos Personales -->
@@ -213,28 +239,38 @@
                                     </h5>
 
                                     <div class="mb-3">
-                                        <label for="nombre" class="form-label">Nombre</label>
+                                        <label for="nombre" class="form-label required-field">Nombre</label>
                                         <input type="text" class="form-control" id="nombre" th:field="*{nombre}"
-                                            required pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$"
-                                            title="Solo se permiten letras y espacios">
+                                            required pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]{2,50}$"
+                                            title="Solo se permiten letras y espacios (2-50 caracteres)"
+                                            placeholder="Ingrese el nombre del alumno">
+                                        <div class="invalid-feedback">
+                                            El nombre es obligatorio y debe contener solo letras (2-50 caracteres).
+                                        </div>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="apellido" class="form-label">Apellido</label>
+                                        <label for="apellido" class="form-label required-field">Apellido</label>
                                         <input type="text" class="form-control" id="apellido" th:field="*{apellido}"
-                                            required pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$"
-                                            title="Solo se permiten letras y espacios">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="dni" class="form-label">DNI</label>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="dni" th:field="*{dni}" required
-                                                pattern="^\d{8}$" title="El DNI debe tener exactamente 8 dígitos">
-                                            <button class="btn btn-primary" type="button"
-                                                id="validarDniBtn">Validar</button>
+                                            required pattern="^[A-Za-záéíóúÁÉÍÓÚñÑ\s]{2,50}$"
+                                            title="Solo se permiten letras y espacios (2-50 caracteres)"
+                                            placeholder="Ingrese el apellido del alumno">
+                                        <div class="invalid-feedback">
+                                            El apellido es obligatorio y debe contener solo letras (2-50 caracteres).
                                         </div>
-                                        <div class="invalid-feedback" id="dni-invalid-feedback">
-                                            El DNI debe tener exactamente 8 dígitos.
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="dni" class="form-label required-field">DNI</label>
+                                        <div class="input-group has-validation">
+                                            <input type="text" class="form-control" id="dni" th:field="*{dni}" required
+                                                pattern="^\d{8}$" title="El DNI debe tener exactamente 8 dígitos"
+                                                placeholder="Ingrese el DNI del alumno (8 dígitos)" maxlength="8">
+                                            <!-- <button class="btn btn-primary" type="button"
+                                                id="validarDniBtn">Validar</button>-->
+                                            <div class="invalid-feedback" id="dni-invalid-feedback">
+                                                El DNI debe tener exactamente 8 dígitos numéricos.
+                                            </div>
                                         </div>
                                         <div class="valid-feedback" id="dni-valid-feedback" style="display: none;">
                                         </div>
@@ -242,43 +278,55 @@
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="email" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="email" th:field="*{email}"
-                                            required>
+                                        <label for="email" class="form-label required-field">Email</label>
+                                        <input type="email" class="form-control" id="email" th:field="*{email}" required
+                                            pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                                            placeholder="ejemplo@correo.com">
                                         <div class="invalid-feedback">
-                                            El email es obligatorio y debe tener un formato válido.
-                                        </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="fechaNacimiento" class="form-label">Fecha de Nacimiento</label>
-                                        <input type="date" class="form-control" id="fechaNacimiento"
-                                            th:field="*{fechaNacimiento}" required
-                                            max="{{#dates.format(#dates.createNow().minusYears(6), 'yyyy-MM-dd')}}"
-                                            title="La fecha de nacimiento debe ser al menos 6 años antes de la fecha actual">
-                                        <div class="invalid-feedback">
-                                            La fecha de nacimiento debe ser al menos 6 años antes de la fecha actual.
+                                            El email es obligatorio y debe tener un formato válido (ejemplo@correo.com).
                                         </div>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="direccion" class="form-label">Dirección</label>
-                                        <input type="text" class="form-control" id="direccion" th:field="*{direccion}">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="telefono" class="form-label">Teléfono</label>
-                                        <input type="text" class="form-control" id="telefono" th:field="*{telefono}"
-                                            required>
+                                        <label for="fechaNacimiento" class="form-label required-field">Fecha de
+                                            Nacimiento</label>
+                                        <input type="date" class="form-control" id="fechaNacimiento"
+                                            th:field="*{fechaNacimiento}" required>
                                         <div class="invalid-feedback">
-                                            El teléfono es obligatorio.
+                                            La fecha de nacimiento es obligatoria y debe estar entre 2 y 17 años de
+                                            edad.
+                                        </div>
+                                        <div class="form-text">El alumno debe tener entre 2 y 17 años de edad.</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="direccion" class="form-label">Dirección</label>
+                                        <input type="text" class="form-control" id="direccion" th:field="*{direccion}"
+                                            placeholder="Ingrese la dirección del alumno" minlength="5" maxlength="100">
+                                        <div class="invalid-feedback">
+                                            La dirección debe tener entre 5 y 100 caracteres.
                                         </div>
                                     </div>
+
                                     <div class="mb-3">
-                                        <label for="telefonoEmergencia" class="form-label">Teléfono de
+                                        <label for="telefono" class="form-label required-field">Teléfono</label>
+                                        <input type="text" class="form-control" id="telefono" th:field="*{telefono}"
+                                            required pattern="^\d{7,15}$" placeholder="Ingrese el teléfono del alumno"
+                                            maxlength="15">
+                                        <div class="invalid-feedback">
+                                            El teléfono es obligatorio y debe contener solo dígitos (7-15 caracteres).
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="telefonoEmergencia" class="form-label required-field">Teléfono de
                                             Emergencia</label>
                                         <input type="text" class="form-control" id="telefonoEmergencia"
-                                            th:field="*{telefonoEmergencia}" required>
+                                            th:field="*{telefonoEmergencia}" required pattern="^\d{7,15}$"
+                                            placeholder="Ingrese un teléfono de emergencia" maxlength="15">
                                         <div class="invalid-feedback">
-                                            El teléfono de emergencia es obligatorio.
+                                            El teléfono de emergencia es obligatorio y debe contener solo dígitos (7-15
+                                            caracteres).
                                         </div>
                                     </div>
                                 </div>
@@ -290,7 +338,7 @@
                                         Datos Académicos
                                     </h5>
                                     <div class="mb-3">
-                                        <label for="grado" class="form-label">Grado</label>
+                                        <label for="grado" class="form-label required-field">Grado</label>
                                         <select class="form-select" id="grado" th:field="*{grado}" required>
                                             <option value="">Seleccione un grado</option>
                                             <option th:each="grado : ${grados}" th:value="${grado.id}"
@@ -299,11 +347,12 @@
                                             </option>
                                         </select>
                                         <div class="invalid-feedback">
-                                            El grado es obligatorio.
+                                            Debe seleccionar un grado válido.
                                         </div>
                                     </div>
+
                                     <div class="mb-3">
-                                        <label for="seccion" class="form-label">Sección</label>
+                                        <label for="seccion" class="form-label required-field">Sección</label>
                                         <select class="form-select" id="seccion" th:field="*{seccion}" required>
                                             <option value="">Seleccione una sección</option>
                                             <option th:each="seccion : ${secciones}" th:value="${seccion.id}"
@@ -312,7 +361,7 @@
                                             </option>
                                         </select>
                                         <div class="invalid-feedback">
-                                            La sección es obligatoria.
+                                            Debe seleccionar una sección válida.
                                         </div>
                                     </div>
 
@@ -324,6 +373,8 @@
                                                 th:text="${padre.nombre + ' ' + padre.apellido}">
                                             </option>
                                         </select>
+                                        <div class="form-text">Si no está registrado, puede crearlo después de guardar
+                                            este alumno.</div>
                                     </div>
 
                                     <div class="mb-3">
@@ -334,9 +385,13 @@
                                                 th:text="${madre.nombre + ' ' + madre.apellido}">
                                             </option>
                                         </select>
+                                        <div class="form-text">Si no está registrada, puede crearla después de guardar
+                                            este alumno.</div>
                                     </div>
+
                                     <div class="mb-3">
-                                        <label for="estadoAcademico" class="form-label">Estado Académico</label>
+                                        <label for="estadoAcademico" class="form-label required-field">Estado
+                                            Académico</label>
                                         <select class="form-select" id="estadoAcademico" th:field="*{estadoAcademico}"
                                             required>
                                             <option value="">Seleccione un estado</option>
@@ -346,29 +401,32 @@
                                             <option value="GRADUADO">Graduado</option>
                                         </select>
                                         <div class="invalid-feedback">
-                                            El estado académico es obligatorio.
-                                        </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="fechaInscripcion" class="form-label">Fecha de Inscripción</label>
-                                        <input type="date" class="form-control" id="fechaInscripcion"
-                                            th:field="*{fechaInscripcion}"
-                                            th:value="${alumno.fechaInscripcion != null ? alumno.fechaInscripcion : #dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
-                                            required max="{{#dates.format(#dates.createNow(), 'yyyy-MM-dd')}}"
-                                            title="La fecha de inscripción no puede ser futura">
-                                        <div class="invalid-feedback">
-                                            La fecha de inscripción no puede ser futura.
+                                            Debe seleccionar un estado académico válido.
                                         </div>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="montoMensual" class="form-label">Monto Mensual</label>
-                                        <div class="input-group">
+                                        <label for="fechaInscripcion" class="form-label required-field">Fecha de
+                                            Inscripción</label>
+                                        <input type="date" class="form-control" id="fechaInscripcion"
+                                            th:field="*{fechaInscripcion}"
+                                            th:value="${alumno.fechaInscripcion != null ? alumno.fechaInscripcion : #dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
+                                            required>
+                                        <div class="invalid-feedback">
+                                            La fecha de inscripción es obligatoria y no puede ser futura.
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="montoMensual" class="form-label required-field">Monto
+                                            Mensual</label>
+                                        <div class="input-group has-validation">
                                             <span class="input-group-text">S/</span>
-                                            <input type="number" step="0.01" class="form-control" id="montoMensual"
-                                                th:field="*{montoMensual}" required>
+                                            <input type="number" step="0.01" min="0" class="form-control"
+                                                id="montoMensual" th:field="*{montoMensual}" required
+                                                placeholder="0.00">
                                             <div class="invalid-feedback">
-                                                El monto mensual es obligatorio.
+                                                El monto mensual es obligatorio y debe ser un valor positivo.
                                             </div>
                                         </div>
                                     </div>
@@ -393,6 +451,10 @@
                             </div>
 
                             <div class="text-end mt-4">
+                                <button type="button" class="btn btn-secondary me-2"
+                                    onclick="window.location.href='/alumnos'">
+                                    <i class="fas fa-times me-2"></i>Cancelar
+                                </button>
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-save me-2"></i>
                                     <span th:text="${alumno.id == null ? 'Guardar' : 'Actualizar'}"></span>
@@ -411,36 +473,151 @@
         // Validación del formulario
         document.addEventListener('DOMContentLoaded', function () {
             const form = document.querySelector('form');
+            const nombreInput = document.getElementById('nombre');
+            const apellidoInput = document.getElementById('apellido');
+            const dniInput = document.getElementById('dni');
+            const emailInput = document.getElementById('email');
+            const telefonoInput = document.getElementById('telefono');
+            const telefonoEmergenciaInput = document.getElementById('telefonoEmergencia');
+            const fechaNacimientoInput = document.getElementById('fechaNacimiento');
+            const fechaInscripcionInput = document.getElementById('fechaInscripcion');
+            const montoMensualInput = document.getElementById('montoMensual');
 
+            // Configurar fechas límite para fecha de nacimiento (entre 2 y 17 años)
+            const hoy = new Date();
+            const dosAniosAtras = new Date(hoy.getFullYear() - 2, hoy.getMonth(), hoy.getDate());
+            const diecisieteAniosAtras = new Date(hoy.getFullYear() - 17, hoy.getMonth(), hoy.getDate());
+
+            // La fecha máxima es hace 2 años (no puede ser menor de 2 años)
+            fechaNacimientoInput.setAttribute('max', dosAniosAtras.toISOString().split('T')[0]);
+            // La fecha mínima es hace 17 años (no puede ser mayor de 17 años)
+            fechaNacimientoInput.setAttribute('min', diecisieteAniosAtras.toISOString().split('T')[0]);
+
+            // Configurar fecha máxima para fecha de inscripción (hoy)
+            fechaInscripcionInput.setAttribute('max', hoy.toISOString().split('T')[0]);
+
+            // Función para validar campos en tiempo real
+            function validarCampo(input) {
+                if (input.validity.valid) {
+                    input.classList.add('is-valid');
+                    input.classList.remove('is-invalid');
+                    return true;
+                } else {
+                    input.classList.remove('is-valid');
+                    input.classList.add('is-invalid');
+                    return false;
+                }
+            }
+
+            // Validación de solo números en campos DNI y teléfonos
+            [dniInput, telefonoInput, telefonoEmergenciaInput].forEach(input => {
+                input.addEventListener('input', function (e) {
+                    // Eliminar caracteres no numéricos
+                    this.value = this.value.replace(/[^0-9]/g, '');
+
+                    // Validar después de modificar
+                    validarCampo(this);
+                });
+
+                // Validar también al perder el foco
+                input.addEventListener('blur', function () {
+                    validarCampo(this);
+                });
+            });
+
+            // Validación de formato para email
+            emailInput.addEventListener('blur', function () {
+                validarCampo(this);
+            });
+
+            // Validación de nombre y apellido (solo letras)
+            [nombreInput, apellidoInput].forEach(input => {
+                input.addEventListener('blur', function () {
+                    validarCampo(this);
+                });
+            });
+
+            // Validación de fechas
+            fechaNacimientoInput.addEventListener('change', function () {
+                const fechaNac = new Date(this.value);
+
+                if (fechaNac > dosAniosAtras) {
+                    this.setCustomValidity('El alumno debe tener al menos 2 años de edad');
+                } else if (fechaNac < diecisieteAniosAtras) {
+                    this.setCustomValidity('El alumno no puede tener más de 17 años de edad');
+                } else {
+                    this.setCustomValidity('');
+                }
+
+                validarCampo(this);
+            });
+
+            fechaInscripcionInput.addEventListener('change', function () {
+                const fechaInsc = new Date(this.value);
+
+                if (fechaInsc > hoy) {
+                    this.setCustomValidity('La fecha de inscripción no puede ser futura');
+                } else {
+                    this.setCustomValidity('');
+                }
+
+                validarCampo(this);
+            });
+
+            // Validación de monto mensual
+            montoMensualInput.addEventListener('input', function () {
+                if (parseFloat(this.value) < 0) {
+                    this.value = 0;
+                }
+                validarCampo(this);
+            });
+
+            // Validación al enviar el formulario
             form.addEventListener('submit', function (event) {
-                // Habilitar validación de bootstrap para todos los campos
+                // Prevenir envío inicialmente
+                event.preventDefault();
+
+                // Aplicar validación de Bootstrap
                 form.classList.add('was-validated');
 
-                // Validación manual de campos
-                const requiredFields = form.querySelectorAll('[required]');
-                let hasErrors = false;
-                let errorMessage = '';
+                // Validar todos los campos requeridos
+                const camposInvalidos = [];
+                const camposRequeridos = form.querySelectorAll('[required]');
+                let formularioValido = true;
 
-                requiredFields.forEach(function (field) {
-                    if (!field.value) {
-                        hasErrors = true;
-                        errorMessage += `El campo "${field.previousElementSibling.textContent}" es obligatorio.\n`;
-                        field.classList.add('is-invalid');
+                camposRequeridos.forEach(function (campo) {
+                    if (!campo.validity.valid) {
+                        formularioValido = false;
+                        camposInvalidos.push(campo);
                     }
                 });
 
-                // Validación específica de email
-                const emailField = document.getElementById('email');
-                if (emailField.value && !emailField.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-                    hasErrors = true;
-                    errorMessage += 'El formato del email no es válido.\n';
-                    emailField.classList.add('is-invalid');
+                // Validación específica de fechas
+                const fechaNacimiento = new Date(fechaNacimientoInput.value);
+                if (fechaNacimiento > dosAniosAtras) {
+                    formularioValido = false;
+                    fechaNacimientoInput.classList.add('is-invalid');
+                    camposInvalidos.push(fechaNacimientoInput);
+                } else if (fechaNacimiento < diecisieteAniosAtras) {
+                    formularioValido = false;
+                    fechaNacimientoInput.classList.add('is-invalid');
+                    camposInvalidos.push(fechaNacimientoInput);
                 }
 
-                // Mostrar mensajes de error
-                if (hasErrors) {
-                    event.preventDefault();
-                    alert('Por favor, corrija los siguientes errores:\n' + errorMessage);
+                if (new Date(fechaInscripcionInput.value) > hoy) {
+                    formularioValido = false;
+                    fechaInscripcionInput.classList.add('is-invalid');
+                    camposInvalidos.push(fechaInscripcionInput);
+                }
+
+                // Si el formulario es válido, enviarlo
+                if (formularioValido) {
+                    form.submit();
+                } else {
+                    // Enfocar el primer campo con error
+                    if (camposInvalidos.length > 0) {
+                        camposInvalidos[0].focus();
+                    }
                 }
             });
 
@@ -458,8 +635,10 @@
                 validFeedback.style.display = 'none';
                 invalidFeedback.style.display = 'none';
                 dniError.style.display = 'none';
+                dniInput.classList.remove('is-valid', 'is-invalid');
 
                 if (!dni || dni.length !== 8 || !/^\d+$/.test(dni)) {
+                    dniInput.classList.add('is-invalid');
                     dniError.textContent = 'El DNI debe tener exactamente 8 dígitos numéricos.';
                     dniError.style.display = 'block';
                     return;
@@ -470,21 +649,16 @@
                 validFeedback.style.display = 'block';
 
                 // Call our API endpoint
-                console.log('Enviando solicitud para validar DNI:', dni);
-
                 fetch('/alumnos/validar-dni?dni=' + dni, {
                     method: 'POST'
                 })
                     .then(response => {
-                        console.log('Respuesta HTTP:', response.status, response.statusText);
                         if (!response.ok) {
                             throw new Error(`Error de servidor: ${response.status} ${response.statusText}`);
                         }
                         return response.json();
                     })
                     .then(data => {
-                        console.log('Datos recibidos:', data);
-
                         if (data.success) {
                             validFeedback.textContent = 'DNI válido: ' + data.nombre;
                             validFeedback.style.display = 'block';
@@ -493,7 +667,8 @@
                             dniError.style.display = 'none';
 
                             // Si los campos nombre y apellido están vacíos, autocompletarlos
-                            if (!nombreInput.value && !apellidoInput.value && data.nombre) {
+                            if ((!nombreInput.value || nombreInput.value.trim() === '') &&
+                                (!apellidoInput.value || apellidoInput.value.trim() === '') && data.nombre) {
                                 // Dividir el nombre completo (asume formato: APELLIDOS NOMBRES)
                                 const nombreCompleto = data.nombre.split(' ');
                                 if (nombreCompleto.length >= 3) {
@@ -505,13 +680,16 @@
                                     apellidoInput.value = nombreCompleto[0];
                                     nombreInput.value = nombreCompleto[1];
                                 }
+
+                                // Validar los campos autocompletados
+                                validarCampo(nombreInput);
+                                validarCampo(apellidoInput);
                             }
                         } else {
                             let mensajeError = 'No se pudo validar el DNI.';
                             if (data.nombre && data.nombre.startsWith('Error:')) {
                                 mensajeError += ' ' + data.nombre;
                             }
-                            console.error('Error de validación:', mensajeError);
                             dniError.textContent = mensajeError;
                             dniError.style.display = 'block';
                             validFeedback.style.display = 'none';
@@ -520,7 +698,6 @@
                         }
                     })
                     .catch(error => {
-                        console.error('Error en fetch:', error);
                         dniError.textContent = `Error al validar el DNI: ${error.message}`;
                         dniError.style.display = 'block';
                         validFeedback.style.display = 'none';
