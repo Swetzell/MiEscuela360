@@ -51,8 +51,8 @@ Este documento describe cómo configurar y levantar el sistema MiEscuela360 en u
 ➤ Habilitar autenticación mixta (SQL Server y Windows)
 
 ➤ Crear usuario:
-    Usuario: sa
-    Contraseña: n3f3rt1t3
+    Usuario: 
+    Contraseña: 
 
 ############################################################
 #              4. RESTAURAR LA BASE DE DATOS              #
