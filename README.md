@@ -70,8 +70,8 @@ Este documento describe cómo configurar y levantar el sistema MiEscuela360 en u
 
 ➤ Reemplazar el contenido:
 spring.datasource.url=jdbc:sqlserver://<TU_PC>\<INSTANCIA>;databaseName=MiEscuela360;encrypt=true;trustServerCertificate=true
-spring.datasource.username=sa
-spring.datasource.password=n3f3rt1t3
+spring.datasource.username=
+spring.datasource.password=
 spring.profiles.active=prod
 server.port=8085
 
